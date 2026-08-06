@@ -1,0 +1,27 @@
+# Configurazione centrale della pipeline.
+# Ogni esperimento legge SOLO da qui: nessun parametro hardcoded nel codice.
+
+seed: 42
+
+dataset:
+  name: "adult_income"
+  source: "openml"          # usiamo sklearn.datasets.fetch_openml
+  openml_name: "adult"
+  openml_version: 2
+  target_column: "class"
+  real_data_path: "data/real/adult.csv"
+  test_size: 0.2
+
+synthetic:
+  method: "gaussian_copula"  # gaussian_copula | ctgan
+  output_path: "data/synthetic/adult_synthetic.csv"
+  ctgan_epochs: 100           # usato solo se method: ctgan
+
+model:
+  type: "random_forest"       # random_forest | logistic_regression
+  n_estimators: 200
+  max_depth: null
+  random_state: 42
+
+report:
+  output_dir: "reports"

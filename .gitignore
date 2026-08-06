@@ -1,0 +1,32 @@
+# Ambiente virtuale
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Dati (troppo grandi/derivati per stare su git; li rigeneriamo da codice)
+data/real/*.csv
+data/synthetic/*.csv
+
+# Modelli serializzati
+*.pkl
+*.joblib
+
+# Report generati (derivati, non serve versionarli — restano solo in locale)
+reports/*.json
+reports/*.md
+reports/*.png
+!reports/.gitkeep
+
+# Editor / OS
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Notebook checkpoints
+.ipynb_checkpoints/
