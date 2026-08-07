@@ -1,15 +1,9 @@
-"""Fase 1 - Quality Assessment del dataset reale.
+"""Fase 1 - Quality Assessment del dataset reale: solo grafici.
 
-Copre tutti i punti richiesti dal piano di tesi:
-- valori mancanti per colonna
-- distribuzioni delle variabili (numeriche e categoriche)
-- correlazioni tra feature numeriche
-- class imbalance del target
-- outlier (rilevati con il metodo IQR)
-
-Il modulo espone due famiglie di funzioni:
-- compute_quality_report: calcola le metriche numeriche/strutturate (finiscono nel JSON di audit)
-- save_*_plot: generano le figure leggibili che finiscono nel report (PNG)
+Ogni funzione save_*_plot produce una figura del report visuale (PNG).
+Il calcolo delle metriche (compute_quality_report) vive in audit/quality_metrics.py:
+questo modulo si occupa solo di visualizzazione, cosi' le due responsabilita'
+restano separate e ognuna resta leggibile da sola.
 """
 from pathlib import Path
 import pandas as pd
@@ -22,71 +16,16 @@ import seaborn as sns
 sns.set_theme(style="whitegrid", font_scale=0.95)
 
 
-# ---------------------------------------------------------------------------
-# Metriche strutturate (finiscono nel report JSON)
-# ---------------------------------------------------------------------------
+def _save_fig(fig, output_path) -> str:
+    """Boilerplate comune a ogni save_*_plot: crea la cartella se manca,
+    salva il PNG e chiude la figura per non accumulare memoria.
+    Centralizzato qui invece che ripetuto in ogni funzione."""
+    out = Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out, dpi=130)
+    plt.close(fig)
+    return str(out)
 
-def _detect_outliers_iqr(series: pd.Series) -> dict:
-    """Rileva gli outlier di una colonna numerica con il metodo IQR (1.5 * IQR),
-    lo standard de-facto per un quality assessment esplorativo (non serve
-    reinventare metodi più sofisticati per questo scopo)."""
-    q1, q3 = series.quantile(0.25), series.quantile(0.75)
-    iqr = q3 - q1
-    lower, upper = q1 - 1.5 * iqr, q3 + 1.5 * iqr
-    n_outliers = int(((series < lower) | (series > upper)).sum())
-    return {
-        "n_outliers": n_outliers,
-        "pct_outliers": round(n_outliers / len(series) * 100, 2),
-        "lower_bound": round(float(lower), 2),
-        "upper_bound": round(float(upper), 2),
-    }
-
-
-def compute_quality_report(df: pd.DataFrame, target_column: str) -> dict:
-    """Calcola tutte le metriche di qualita' richieste dalla Fase 1.
-
-    Returns:
-        dict con: shape, missing values, class imbalance, colonne numeriche/
-        categoriche, statistiche descrittive, outlier per colonna numerica,
-        matrice di correlazione tra le variabili numeriche.
-    """
-    n_rows, n_cols = df.shape
-
-    missing_pct = (df.isnull().mean() * 100).round(2).to_dict()
-
-    numeric_cols = df.select_dtypes(include="number").columns.tolist()
-    categorical_cols = [c for c in df.columns if c not in numeric_cols]
-
-    class_counts = df[target_column].value_counts()
-    class_balance = (class_counts / class_counts.sum() * 100).round(2).to_dict()
-
-    outliers = {
-        col: _detect_outliers_iqr(df[col].dropna())
-        for col in numeric_cols
-    }
-
-    correlation_matrix = (
-        df[numeric_cols].corr().round(3).to_dict() if len(numeric_cols) > 1 else {}
-    )
-
-    report = {
-        "n_rows": n_rows,
-        "n_cols": n_cols,
-        "numeric_columns": numeric_cols,
-        "categorical_columns": categorical_cols,
-        "missing_values_pct": missing_pct,
-        "target_column": target_column,
-        "class_balance_pct": class_balance,
-        "numeric_summary": df[numeric_cols].describe().round(2).to_dict() if numeric_cols else {},
-        "outliers": outliers,
-        "correlation_matrix": correlation_matrix,
-    }
-    return report
-
-
-# ---------------------------------------------------------------------------
-# Grafici (finiscono nel report visuale)
-# ---------------------------------------------------------------------------
 
 def save_target_balance_plot(df: pd.DataFrame, target_column: str, output_path: str) -> str:
     """Barplot della distribuzione delle classi del target: rende immediatamente
@@ -101,13 +40,9 @@ def save_target_balance_plot(df: pd.DataFrame, target_column: str, output_path: 
                  f"{p}%", ha="center", va="bottom", fontsize=10, fontweight="bold")
     ax.set_title(f"Class balance — '{target_column}'", fontsize=12, fontweight="bold")
     ax.set_ylabel("Numero di record")
-
     fig.tight_layout()
-    out = Path(output_path)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out, dpi=130)
-    plt.close(fig)
-    return str(out)
+
+    return _save_fig(fig, output_path)
 
 
 def save_missing_values_plot(df: pd.DataFrame, output_path: str) -> str:
@@ -125,13 +60,9 @@ def save_missing_values_plot(df: pd.DataFrame, output_path: str) -> str:
         ax.text(v, i, f" {v}%", va="center", fontsize=9)
     ax.set_title("Missing values per colonna (%)", fontsize=12, fontweight="bold")
     ax.set_xlabel("% valori mancanti")
-
     fig.tight_layout()
-    out = Path(output_path)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out, dpi=130)
-    plt.close(fig)
-    return str(out)
+
+    return _save_fig(fig, output_path)
 
 
 def save_numeric_distributions_plot(df: pd.DataFrame, numeric_cols: list, output_path: str) -> str:
@@ -154,11 +85,8 @@ def save_numeric_distributions_plot(df: pd.DataFrame, numeric_cols: list, output
 
     fig.suptitle("Distribuzioni delle variabili numeriche", fontsize=13, fontweight="bold")
     fig.tight_layout(rect=[0, 0, 1, 0.97])
-    out = Path(output_path)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out, dpi=130)
-    plt.close(fig)
-    return str(out)
+
+    return _save_fig(fig, output_path)
 
 
 def save_categorical_distributions_plot(df: pd.DataFrame, categorical_cols: list,
@@ -182,11 +110,8 @@ def save_categorical_distributions_plot(df: pd.DataFrame, categorical_cols: list
 
     fig.suptitle("Distribuzioni delle variabili categoriche", fontsize=13, fontweight="bold")
     fig.tight_layout(rect=[0, 0, 1, 0.97])
-    out = Path(output_path)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out, dpi=130)
-    plt.close(fig)
-    return str(out)
+
+    return _save_fig(fig, output_path)
 
 
 def save_correlation_heatmap(df: pd.DataFrame, numeric_cols: list, output_path: str) -> str:
@@ -200,18 +125,14 @@ def save_correlation_heatmap(df: pd.DataFrame, numeric_cols: list, output_path: 
     sns.heatmap(corr, annot=True, fmt=".2f", cmap="coolwarm", center=0,
                 square=True, linewidths=0.5, ax=ax, cbar_kws={"shrink": 0.8})
     ax.set_title("Correlazioni tra variabili numeriche", fontsize=12, fontweight="bold")
-
     fig.tight_layout()
-    out = Path(output_path)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out, dpi=130)
-    plt.close(fig)
-    return str(out)
+
+    return _save_fig(fig, output_path)
 
 
 def save_outliers_boxplot(df: pd.DataFrame, numeric_cols: list, output_path: str) -> str:
     """Boxplot per variabile numerica: rende visibile la presenza di outlier
-    (i punti oltre i baffi), coerente con il rilevamento IQR di compute_quality_report."""
+    (i punti oltre i baffi), coerente con il rilevamento IQR di quality_metrics.py."""
     if not numeric_cols:
         return ""
 
@@ -229,11 +150,8 @@ def save_outliers_boxplot(df: pd.DataFrame, numeric_cols: list, output_path: str
 
     fig.suptitle("Boxplot — rilevamento outlier", fontsize=13, fontweight="bold")
     fig.tight_layout(rect=[0, 0, 1, 0.97])
-    out = Path(output_path)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out, dpi=130)
-    plt.close(fig)
-    return str(out)
+
+    return _save_fig(fig, output_path)
 
 
 def generate_all_plots(df: pd.DataFrame, quality: dict, target_column: str, output_dir: str) -> dict:
