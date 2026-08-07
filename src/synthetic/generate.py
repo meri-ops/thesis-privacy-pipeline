@@ -20,7 +20,8 @@ from sdv.single_table import GaussianCopulaSynthesizer, CTGANSynthesizer
 def _build_metadata(df: pd.DataFrame) -> SingleTableMetadata:
     """Rileva automaticamente i tipi di colonna (numerica, categorica, id, ecc.)
     a partire dal dataframe. SDV usa questi metadati per decidere come
-    modellare statisticamente ogni colonna.
+    modellare statisticamente ogni colonna, e la Fase 3 li riusa per
+    confrontare correttamente reale vs sintetico.
     """
     metadata = SingleTableMetadata()
     metadata.detect_from_dataframe(df)
@@ -35,8 +36,8 @@ def train_synthesizer(train_df: pd.DataFrame, config: dict):
         config: configurazione globale dell'esperimento.
 
     Returns:
-        Il synthesizer addestrato (riutilizzabile per generare piu' campioni
-        senza dover riaddestrare).
+        Tupla (synthesizer, metadata): il synthesizer addestrato e i metadata
+        usati per addestrarlo (servono anche in Fase 3 per la validazione).
     """
     synth_cfg = config["synthetic"]
     method = synth_cfg["method"]
@@ -61,7 +62,7 @@ def train_synthesizer(train_df: pd.DataFrame, config: dict):
     synthesizer.fit(train_df)
     print("[synthetic] Training completato.")
 
-    return synthesizer
+    return synthesizer, metadata
 
 
 def generate_synthetic_data(synthesizer, n_rows: int, config: dict) -> pd.DataFrame:
