@@ -11,6 +11,7 @@ Il synthesizer viene addestrato ESCLUSIVAMENTE sul train set: il test set
 non deve mai essere usato in questa fase (verra' usato solo in Fase 4 per
 la valutazione finale dei modelli).
 """
+import time
 from pathlib import Path
 import pandas as pd
 from sdv.metadata import SingleTableMetadata
@@ -36,8 +37,9 @@ def train_synthesizer(train_df: pd.DataFrame, config: dict):
         config: configurazione globale dell'esperimento.
 
     Returns:
-        Tupla (synthesizer, metadata): il synthesizer addestrato e i metadata
-        usati per addestrarlo (servono anche in Fase 3 per la validazione).
+        Tupla (synthesizer, metadata, fit_seconds): il synthesizer addestrato,
+        i metadata (servono anche in Fase 3) e il tempo di training in secondi
+        (richiesto dall'audit trail di Fase 5, sezione "Synthetic Data").
     """
     synth_cfg = config["synthetic"]
     method = synth_cfg["method"]
@@ -59,13 +61,15 @@ def train_synthesizer(train_df: pd.DataFrame, config: dict):
         )
 
     print(f"[synthetic] Addestro '{method}' su {len(train_df)} righe (train set)...")
+    t0 = time.perf_counter()
     synthesizer.fit(train_df)
-    print("[synthetic] Training completato.")
+    fit_seconds = round(time.perf_counter() - t0, 2)
+    print(f"[synthetic] Training completato in {fit_seconds}s.")
 
-    return synthesizer, metadata
+    return synthesizer, metadata, fit_seconds
 
 
-def generate_synthetic_data(synthesizer, n_rows: int, config: dict) -> pd.DataFrame:
+def generate_synthetic_data(synthesizer, n_rows: int, config: dict):
     """Genera n_rows record sintetici e li salva su disco.
 
     Args:
@@ -75,14 +79,16 @@ def generate_synthetic_data(synthesizer, n_rows: int, config: dict) -> pd.DataFr
         config: configurazione globale dell'esperimento.
 
     Returns:
-        Il DataFrame sintetico generato.
+        Tupla (synthetic_df, sample_seconds).
     """
     print(f"[synthetic] Genero {n_rows} righe sintetiche...")
+    t0 = time.perf_counter()
     synthetic_df = synthesizer.sample(num_rows=n_rows)
+    sample_seconds = round(time.perf_counter() - t0, 2)
 
     output_path = Path(config["synthetic"]["output_path"])
     output_path.parent.mkdir(parents=True, exist_ok=True)
     synthetic_df.to_csv(output_path, index=False)
-    print(f"[synthetic] Dataset sintetico salvato in {output_path}")
+    print(f"[synthetic] Dataset sintetico salvato in {output_path} ({sample_seconds}s)")
 
-    return synthetic_df
+    return synthetic_df, sample_seconds
