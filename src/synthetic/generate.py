@@ -1,15 +1,13 @@
-"""Fase 2 - Generazione di dati sintetici a partire dal train set reale.
+"""Fase 2: enerazione di dati sintetici a partire dal train set reale.
 
-Supporta due synthesizer, selezionabili da config.yaml (synthetic.method):
-- gaussian_copula: modello statistico, veloce, buona baseline per dati misti
-  numerici/categorici. E' il default consigliato per iniziare.
-- ctgan: rete generativa (GAN), cattura meglio distribuzioni multimodali e
-  correlazioni complesse, ma il training e' molto piu' lento (minuti anziche'
-  secondi anche su dataset di media dimensione).
+Possono essere selezionati due metodi di sintesi, uno statistico (gaussian_copula) e uno basato su reti generative (ctgan). 
+Il metodo viene scelto in config.yaml
+-gaussian_copula: modello statistico, veloce, buona baseline per dati misti
+numerici/categorici. 
+-ctgan: rete generativa (GAN), cattura meglio distribuzioni multimodali e
+correlazioni complesse, ma il training e' molto piu' lento (ventina di minuti sul mio hardware. da specificare meglio)
 
-Il synthesizer viene addestrato ESCLUSIVAMENTE sul train set: il test set
-non deve mai essere usato in questa fase (verra' usato solo in Fase 4 per
-la valutazione finale dei modelli).
+Il sintetizzatore viene addestrato ESCLUSIVAMENTE sul train set
 """
 import time
 from pathlib import Path
@@ -19,9 +17,9 @@ from sdv.single_table import GaussianCopulaSynthesizer, CTGANSynthesizer
 
 
 def _build_metadata(df: pd.DataFrame) -> SingleTableMetadata:
-    """Rileva automaticamente i tipi di colonna (numerica, categorica, id, ecc.)
+    """rileva automaticamente i tipi di colonna (numerica, categorica, id, ecc.)
     a partire dal dataframe. SDV usa questi metadati per decidere come
-    modellare statisticamente ogni colonna, e la Fase 3 li riusa per
+    modellare statisticamente ogni colonna e poi nella Fase 3 li riusa per
     confrontare correttamente reale vs sintetico.
     """
     metadata = SingleTableMetadata()
@@ -30,16 +28,10 @@ def _build_metadata(df: pd.DataFrame) -> SingleTableMetadata:
 
 
 def train_synthesizer(train_df: pd.DataFrame, config: dict):
-    """Istanzia e addestra il synthesizer indicato in config.yaml.
+    """istanzia e addestra il synthesizer indicato in config.yaml
 
-    Args:
-        train_df: SOLO il train set (mai il test set, mai il dataset completo).
-        config: configurazione globale dell'esperimento.
-
-    Returns:
-        Tupla (synthesizer, metadata, fit_seconds): il synthesizer addestrato,
-        i metadata (servono anche in Fase 3) e il tempo di training in secondi
-        (richiesto dall'audit trail di Fase 5, sezione "Synthetic Data").
+    ritorna una tupla con il synthesizer addestrato, 
+    e il tempo di training in secondi
     """
     synth_cfg = config["synthetic"]
     method = synth_cfg["method"]
@@ -70,16 +62,16 @@ def train_synthesizer(train_df: pd.DataFrame, config: dict):
 
 
 def generate_synthetic_data(synthesizer, n_rows: int, config: dict):
-    """Genera n_rows record sintetici e li salva su disco.
+    """genera n_rows record sintetici e li salva su disco.
 
-    Args:
+    args:
         synthesizer: oggetto restituito da train_synthesizer.
         n_rows: numero di righe sintetiche da generare (di norma = len(train_df),
             per avere un confronto 1:1 nella Fase 3 di validazione).
         config: configurazione globale dell'esperimento.
 
-    Returns:
-        Tupla (synthetic_df, sample_seconds).
+    ritorna:
+        tupla (synthetic_df, sample_seconds).
     """
     print(f"[synthetic] Genero {n_rows} righe sintetiche...")
     t0 = time.perf_counter()

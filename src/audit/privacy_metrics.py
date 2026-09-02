@@ -1,49 +1,39 @@
-"""Fase 3 - Validazione privacy del dataset sintetico rispetto ai dati reali.
+"""Fase 3: validazione privacy del dataset sintetico rispetto ai dati reali
 
-Tre controlli complementari, in ordine di rigore crescente:
+Tre controlli complementari in ordine di rigore crescente:
 
 1. Duplicati esatti: quante righe sintetiche sono identiche, colonna per
    colonna, a una riga del train reale. Controllo elementare ma economico
    e indipendente da SDMetrics: rileva il caso peggiore (memorizzazione
    letterale di record).
 
-2. NewRowSynthesis (SDMetrics): percentuale di righe sintetiche che NON
-   sono troppo simili (entro una tolleranza numerica) a nessuna riga
-   reale. E' la metrica di "novita'" piu' diffusa in letteratura come
-   proxy del rischio di identificazione per similarita'.
+2. 2. NewRowSynthesis (SDMetrics): percentuale di righe sintetiche 
+che non risultano troppo simili, entro una determinata tolleranza, 
+ad alcuna riga reale del training set. La metrica quantifica la novelty 
+dei record sintetici.
 
-3. DCR Overfitting Protection (SDMetrics): confronta la Distance to
-   Closest Record (DCR) del sintetico rispetto al TRAIN (usato per
-   generare i dati) e rispetto a un HOLDOUT reale mai visto dal
-   synthesizer (qui: il test set). Se il sintetico e' sistematicamente
-   piu' vicino al train che all'holdout, e' evidenza che il synthesizer
-   ha memorizzato i dati di training invece di generalizzarne la
-   distribuzione - il proxy piu' diretto, tra quelli disponibili in
-   SDMetrics, del rischio di privacy legato all'overfitting del modello
-   generativo.
+3. DCR Overfitting Protection (SDMetrics): confronta la Distance 
+to Closest Record (DCR) dei dati sintetici rispetto al TRAIN, 
+utilizzato per addestrare il synthesizer, e rispetto a un HOLDOUT 
+reale mai osservato dal modello (qui: il test set). Se i record 
+sintetici risultano sistematicamente più vicini al TRAIN rispetto 
+all'HOLDOUT, ciò costituisce un'evidenza di possibile overfitting o 
+memorization del training data, anziché di semplice 
+generalizzazione della distribuzione sottostante.
 
-Nota metodologica: (2) e (3) richiedono una versione recente di SDMetrics
-e la loro firma esatta puo' variare tra versioni. Se la libreria
-installata non espone questi metodi (o li espone con parametri diversi),
-la pipeline NON si interrompe: il controllo viene saltato/segnalato come
-errore e annotato come tale nel report, cosi' l'audit trail resta
-veritiero anche in caso di incompatibilita' di versione.
 """
 import pandas as pd
 
 
 def _metadata_as_dict(metadata):
-    """SDMetrics, chiamato direttamente (a differenza dei wrapper
-    sdv.evaluation.single_table gia' usati in fidelity_metrics.py), in
-    alcune versioni si aspetta il metadata come dict piuttosto che come
-    oggetto SingleTableMetadata di SDV. Normalizziamo qui per compatibilita'
-    con entrambe le API, invece di scoprirlo a runtime con un errore oscuro.
+    """
+    normalizzo il metadata in dict per compatibilita' con SDMetrics
     """
     return metadata.to_dict() if hasattr(metadata, "to_dict") else metadata
 
 
 def check_exact_duplicates(real_df: pd.DataFrame, synthetic_df: pd.DataFrame) -> dict:
-    """Righe sintetiche identiche, colonna per colonna, a una riga reale."""
+    """righe sintetiche identiche, colonna per colonna, a una riga reale."""
     merged = synthetic_df.merge(real_df.drop_duplicates(), how="inner")
     n_exact_duplicates = len(merged)
     return {
@@ -99,11 +89,7 @@ def check_dcr_overfitting_protection(
     """Confronta la Distance to Closest Record (DCR) del sintetico rispetto
     al train (usato per generare i dati) e rispetto a un holdout reale (qui:
     il test set, mai visto dal synthesizer).
-
-    Score atteso vicino a 0.5 = il sintetico e' equidistante da train e
-    holdout, nessuna evidenza di memorizzazione. Score vicino a 0 = il
-    sintetico e' sistematicamente piu' vicino al train: possibile
-    overfitting/memorizzazione, quindi rischio di privacy piu' concreto.
+    
     """
     try:
         from sdmetrics.single_table import DCROverfittingProtection
@@ -120,17 +106,26 @@ def check_dcr_overfitting_protection(
             num_rows_subsample=num_rows_subsample,
             num_iterations=1,
         )
+        # NB: compute_breakdown NON restituisce "median_DCR_to_*_data" (quelle
+        # chiavi non esistono nella risposta di SDMetrics: prima venivano
+        # cercate per errore e finivano sempre null nel report). La chiave
+        # corretta e' "synthetic_data_percentages", con le due frazioni di
+        # righe sintetiche piu' vicine al train vs. all'holdout.
+        percentages = breakdown.get("synthetic_data_percentages", {})
         return {
             "status": "ok",
             "score": round(float(breakdown["score"]), 4),
-            "median_dcr_to_training_data": breakdown.get("median_DCR_to_training_data"),
-            "median_dcr_to_holdout_data": breakdown.get("median_DCR_to_holdout_data"),
+            "pct_synthetic_closer_to_training": percentages.get("closer_to_training"),
+            "pct_synthetic_closer_to_holdout": percentages.get("closer_to_holdout"),
             "num_rows_subsample": num_rows_subsample,
             "interpretation": (
-                "Score vicino a 0.5 = il sintetico e' equidistante da train e "
-                "holdout (nessuna evidenza di memorizzazione). Score vicino a 0 "
-                "= il sintetico e' sospettosamente piu' vicino al train: "
-                "possibile overfitting del synthesizer sui dati di training."
+                "Score vicino a 1.0 = il sintetico non e' mai (o quasi) piu' "
+                "vicino al train che all'holdout: nessuna evidenza di "
+                "memorizzazione, buon segnale di privacy. Score vicino a 0.0 "
+                "= il sintetico e' sistematicamente piu' vicino al train: "
+                "possibile overfitting del synthesizer sui dati di training, "
+                "con rischio di leakage di record reali. (0.5 non e' il "
+                "valore ideale: e' gia' una zona di attenzione, non neutra.)"
             ),
         }
     except Exception as e:

@@ -42,9 +42,7 @@ def encode_target(y_train: pd.Series, *y_others: pd.Series):
     y_train piu' a un numero arbitrario di altre serie (es. y_test,
     y_train_synthetic), cosi' tutte usano la STESSA mappatura classe->intero.
     Indispensabile per confrontare in modo coerente Esperimento A e B.
-
-    Returns:
-        (y_train_encoded, [y_other_encoded, ...], label_encoder)
+    
     """
     encoder = LabelEncoder()
     y_train_enc = encoder.fit_transform(y_train)

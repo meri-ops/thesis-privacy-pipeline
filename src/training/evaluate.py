@@ -1,7 +1,6 @@
-"""Fase 4 - Valutazione del modello.
+"""Fase 4: Valutazione del modello.
 
-Metriche richieste dal piano di tesi: Accuracy, Precision, Recall, F1,
-AUC-ROC. Precision/Recall/F1 sono calcolate come "binary": il target e'
+Accuracy, Precision, Recall, F1, AUC-ROC. Precision/Recall/F1 sono calcolate come "binary": il target e'
 sempre a 2 classi per costruzione (vedi preprocessing.clean_data.encode_target),
 quindi pos_label=1 di default va bene.
 """
@@ -12,11 +11,8 @@ from sklearn.metrics import (
 
 def evaluate_model(model, X_test, y_test) -> dict:
     """Calcola le metriche di valutazione standard su un test set gia'
-    preprocessato (stesso preprocessor/target-encoder usato in training).
+    preprocessato (stesso preprocessor/target-encoder usato in training)
 
-    Returns:
-        dict con accuracy, precision, recall, f1, auc_roc (auc_roc None se
-        il modello non supporta predict_proba).
     """
     y_pred = model.predict(X_test)
 

@@ -1,4 +1,4 @@
-"""Fase 3 - Grafico riassuntivo dei punteggi di privacy."""
+"""Fase 3:Grafico riassuntivo dei punteggi di privacy."""
 from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
@@ -6,11 +6,8 @@ import matplotlib.pyplot as plt
 
 
 def save_privacy_summary_plot(privacy_summary: dict, output_path: str) -> str:
-    """Barplot dei punteggi di privacy (NewRowSynthesis, DCR Overfitting
-    Protection) con le rispettive soglie di riferimento. Le metriche non
-    disponibili (status != 'ok', es. libreria non aggiornata) vengono omesse
-    dal grafico con un avviso in console, non nascoste silenziosamente nel
-    report finale.
+    """barplot dei punteggi di privacy (NewRowSynthesis, DCR Overfitting
+    Protection) con le rispettive soglie di riferimento
     """
     labels, values, refs = [], [], []
 

@@ -1,11 +1,6 @@
-"""Fase 5 - Audit trail: rendering del report JSON in un documento Markdown
-leggibile, da poter includere in appendice/come figura nel Capitolo 5 della
-tesi (il documento di progetto scarta esplicitamente MLflow: "un report
-generator custom in Markdown/JSON e' sufficiente e piu' controllabile").
-
+"""Fase 5: Audit trail: rendering del report JSON in un documento Markdown
 Il report JSON (main.py) resta la fonte dati machine-readable e completa;
-questo modulo NON ricalcola nulla, si limita a formattarla per un lettore
-umano.
+questo modulo NON ricalcola nulla, pura riformattazione
 """
 from pathlib import Path
 from jinja2 import Template
@@ -91,10 +86,10 @@ Generato il **{{ report.timestamp }}** · seed = `{{ report.split.seed }}`
 {% set nrs = report.privacy.new_row_synthesis -%}
 | New Row Synthesis | {% if nrs.status == "ok" %}{{ nrs.score }} (soglia indicativa ≥ 0.8){% else %}non disponibile — {{ nrs.status }}: {{ nrs.reason }}{% endif %} |
 {% set dcr = report.privacy.dcr_overfitting_protection -%}
-| DCR Overfitting Protection | {% if dcr.status == "ok" %}{{ dcr.score }} (ideale ~0.5){% else %}non disponibile — {{ dcr.status }}: {{ dcr.reason }}{% endif %} |
+| DCR Overfitting Protection | {% if dcr.status == "ok" %}{{ dcr.score }} (migliore = 1.0, peggiore = 0.0){% else %}non disponibile — {{ dcr.status }}: {{ dcr.reason }}{% endif %} |
 
 {% if nrs.status == "ok" %}> {{ nrs.interpretation }}{% endif %}
-{% if dcr.status == "ok" %}> {{ dcr.interpretation }}{% endif %}
+{% if dcr.status == "ok" %}> Score vicino a 1.0 = il sintetico non e' mai (o quasi) piu' vicino al train che all'holdout: nessuna evidenza di memorizzazione, buon segnale di privacy. Score vicino a 0.0 = il sintetico e' sistematicamente piu' vicino al train: possibile overfitting del synthesizer sui dati di training, con rischio di leakage di record reali. Fonte: SDMetrics DCROverfittingProtection docs.{% endif %}
 
 ---
 
@@ -127,14 +122,7 @@ Generato il **{{ report.timestamp }}** · seed = `{{ report.split.seed }}`
 
 
 def render_markdown_report(report: dict, output_path: str, json_filename: str = "phase1_quality_report.json") -> str:
-    """Renderizza `report` (lo stesso dizionario salvato come JSON in
-    main.py) in un file Markdown leggibile.
-
-    Non fallisce l'intera pipeline se manca qualche campo opzionale: i
-    filtri Jinja2 con `default` gestiscono i casi limite piu' comuni, ma se
-    la struttura del dict cambia in modo sostanziale meglio far fallire qui
-    con un errore chiaro piuttosto che produrre un report silenziosamente
-    incompleto.
+    """Renderizza `report` 
     """
     markdown = _TEMPLATE.render(report=report, json_filename=json_filename)
 

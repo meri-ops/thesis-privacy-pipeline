@@ -20,7 +20,7 @@ privacy/fedeltà e auditabilità end-to-end.
 
 ## Setup
 
-\`\`\`bash
+```bash
 # 1. Crea l'ambiente virtuale (Python 3.10 o 3.11)
 py -3.11 -m venv .venv
 
@@ -29,13 +29,13 @@ py -3.11 -m venv .venv
 
 # 3. Installa le dipendenze
 pip install -r requirements.txt
-\`\`\`
+```
 
 ## Esecuzione
 
-\`\`\`bash
+```bash
 python main.py
-\`\`\`
+```
 
 Alla prima esecuzione scarica il dataset Adult Income da OpenML (serve
 connessione internet) e lo salva in `data/real/adult.csv`. Alle esecuzioni
@@ -48,6 +48,7 @@ pipeline sovrascrive il contenuto di `reports/` — per confrontare più
 metodi, salvare manualmente i report tra un'esecuzione e l'altra.
 
 Al termine, la pipeline produce:
+
 - `reports/phase1_quality_report.json` — report completo machine-readable
 - `reports/audit_report.md` — stesso contenuto, leggibile, con hash SHA256
   di dataset, train/test split, dataset sintetico, modelli e config
@@ -56,27 +57,33 @@ Al termine, la pipeline produce:
 
 ## Struttura del progetto
 
-\`\`\`
+```text
 thesis-project/
 ├── data/
 │   ├── real/            # dataset reale + split train/test (non versionati)
-│   └── synthetic/        # dataset sintetico generato (non versionato)
+│   └── synthetic/       # dataset sintetico generato (non versionato)
 ├── src/
-│   ├── ingestion/         # caricamento dati (Fase 1)
-│   ├── preprocessing/      # encoding feature per il training
-│   ├── synthetic/           # generazione dati sintetici (Fase 2)
-│   ├── training/             # training/valutazione modello (Fase 4)
-│   ├── audit/                 # quality/fidelity/privacy metrics + report generator (Fasi 1, 3, 5)
-│   └── utils/                  # config loader, hashing SHA256
-├── reports/               # report e grafici generati automaticamente
-├── notebooks/             # analisi esplorativa (non ancora popolata)
-├── config.yaml             # unico punto di configurazione dell'esperimento
+│   ├── ingestion/       # caricamento dati (Fase 1)
+│   ├── preprocessing/   # encoding feature per il training
+│   ├── synthetic/       # generazione dati sintetici (Fase 2)
+│   ├── training/        # training/valutazione modello (Fase 4)
+│   ├── audit/           # quality/fidelity/privacy metrics + report generator (Fasi 1, 3, 5)
+│   └── utils/           # config loader, hashing SHA256
+├── reports/             # report e grafici generati automaticamente
+├── notebooks/           # analisi esplorativa (non ancora popolata)
+├── config.yaml          # unico punto di configurazione dell'esperimento
 ├── requirements.txt
-└── main.py                  # entry point della pipeline (Fasi 1→5)
-\`\`\`
+└── main.py              # entry point della pipeline (Fasi 1→5)
+```
 
 ## Limiti noti
 
-- Il seed globale non è propagato al training di CTGAN (solo a split e modelli scikit-learn): la generazione sintetica con CTGAN non è quindi perfettamente riproducibile bit-per-bit tra esecuzioni.
-- Un solo dataset (Adult Income), come da scope definito in fase di pianificazione.
-- `max_depth: null` per RandomForest produce modelli molto pesanti (~200 MB ciascuno) e potenzialmente overfit; da rivedere prima dell'analisi finale dei risultati.
+- Il seed globale non è propagato al training di CTGAN (solo a split e
+  modelli scikit-learn): la generazione sintetica con CTGAN non è quindi
+  perfettamente riproducibile bit-per-bit tra esecuzioni.
+- Un solo dataset (Adult Income), come da scope definito in fase di
+  pianificazione.
+- `max_depth: null` per RandomForest produce modelli molto pesanti
+  (~200 MB ciascuno) e potenzialmente overfit; da rivedere prima
+  dell'analisi finale dei risultati.
+git

@@ -1,23 +1,20 @@
-"""Fase 1 - Quality Assessment del dataset reale: solo calcolo.
+"""Fase 1: Quality Assessment del dataset reale
 
-Copre tutti i punti richiesti dal piano di tesi:
-- valori mancanti per colonna
-- statistiche descrittive delle variabili numeriche
-- correlazioni tra feature numeriche
-- class imbalance del target
-- outlier (rilevati con il metodo IQR)
+-valori mancanti per colonna
+-statistiche descrittive delle variabili numeriche
+-correlazioni tra feature numeriche
+-class imbalance del target
+-outlier (rilevati con il metodo IQR)
 
-Nessuna dipendenza da matplotlib/seaborn qui: questo modulo produce solo
-strutture dati (dict), che finiscono nel report JSON di audit. La
-generazione dei grafici vive in audit/plots.py.
+qui produco solo strutture dati (dict) che finiscono nel report JSON di audit. La
+generazione dei grafici sta in audit/plots.py
 """
 import pandas as pd
 
 
 def _detect_outliers_iqr(series: pd.Series) -> dict:
-    """Rileva gli outlier di una colonna numerica con il metodo IQR (1.5 * IQR),
-    lo standard de-facto per un quality assessment esplorativo (non serve
-    reinventare metodi più sofisticati per questo scopo)."""
+    """rileva gli outlier di una colonna numerica con il metodo IQR (1.5 * IQR),
+    lo standard per un quality assessment esplorativo"""
     q1, q3 = series.quantile(0.25), series.quantile(0.75)
     iqr = q3 - q1
     lower, upper = q1 - 1.5 * iqr, q3 + 1.5 * iqr
@@ -31,10 +28,9 @@ def _detect_outliers_iqr(series: pd.Series) -> dict:
 
 
 def compute_quality_report(df: pd.DataFrame, target_column: str) -> dict:
-    """Calcola tutte le metriche di qualita' richieste dalla Fase 1.
+    """calcola tutte le metriche di qualita richieste da Fase 1.
 
-    Returns:
-        dict con: shape, missing values, class imbalance, colonne numeriche/
+        ritorna dict con: shape, missing values, class imbalance, colonne numeriche/
         categoriche, statistiche descrittive, outlier per colonna numerica,
         matrice di correlazione tra le variabili numeriche.
     """

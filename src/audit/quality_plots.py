@@ -1,15 +1,14 @@
-"""Fase 1 - Quality Assessment del dataset reale: solo grafici.
+"""Fase 1: Quality Assessment del dataset reale: solo grafici.
 
 Ogni funzione save_*_plot produce una figura del report visuale (PNG).
-Il calcolo delle metriche (compute_quality_report) vive in audit/quality_metrics.py:
-questo modulo si occupa solo di visualizzazione, cosi' le due responsabilita'
-restano separate e ognuna resta leggibile da sola.
+Il calcolo delle metriche (compute_quality_report) sta in audit/quality_metrics.py:
+questo modulo si occupa solo di visualizzazione
 """
 from pathlib import Path
 import pandas as pd
 import numpy as np
 import matplotlib
-matplotlib.use("Agg")  # backend non interattivo: nessuna finestra grafica richiesta
+matplotlib.use("Agg")  
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -17,9 +16,8 @@ sns.set_theme(style="whitegrid", font_scale=0.95)
 
 
 def _save_fig(fig, output_path) -> str:
-    """Boilerplate comune a ogni save_*_plot: crea la cartella se manca,
-    salva il PNG e chiude la figura per non accumulare memoria.
-    Centralizzato qui invece che ripetuto in ogni funzione."""
+    """comune a ogni save_*_plot: crea la cartella se manca,
+    salva il PNG e chiude la figura"""
     out = Path(output_path)
     out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out, dpi=130)
@@ -28,7 +26,7 @@ def _save_fig(fig, output_path) -> str:
 
 
 def save_target_balance_plot(df: pd.DataFrame, target_column: str, output_path: str) -> str:
-    """Barplot della distribuzione delle classi del target: rende immediatamente
+    """barplot della distribuzione delle classi del target: rende immediatamente
     visibile lo sbilanciamento delle classi, rilevante per la Fase 4 (training)."""
     counts = df[target_column].value_counts()
     pct = (counts / counts.sum() * 100).round(1)
@@ -46,8 +44,8 @@ def save_target_balance_plot(df: pd.DataFrame, target_column: str, output_path: 
 
 
 def save_missing_values_plot(df: pd.DataFrame, output_path: str) -> str:
-    """Barplot dei missing values per colonna (solo colonne con missing > 0).
-    Se non ci sono missing values, non genera nulla e ritorna stringa vuota."""
+    """barplot dei missing values per colonna (solo colonne con missing > 0)
+    Se non ci sono missing values non genera nulla e ritorna stringa vuota"""
     missing_pct = (df.isnull().mean() * 100).round(2)
     missing_pct = missing_pct[missing_pct > 0].sort_values(ascending=True)
 
@@ -66,7 +64,7 @@ def save_missing_values_plot(df: pd.DataFrame, output_path: str) -> str:
 
 
 def save_numeric_distributions_plot(df: pd.DataFrame, numeric_cols: list, output_path: str) -> str:
-    """Istogrammi con KDE per tutte le variabili numeriche (non limitato a 6:
+    """istogrammi con KDE per tutte le variabili numeriche (non limitato a 6:
     se sono tante, la griglia si adatta)."""
     if not numeric_cols:
         return ""
@@ -91,8 +89,8 @@ def save_numeric_distributions_plot(df: pd.DataFrame, numeric_cols: list, output
 
 def save_categorical_distributions_plot(df: pd.DataFrame, categorical_cols: list,
                                           output_path: str, top_n: int = 8) -> str:
-    """Barplot delle categorie piu' frequenti per ciascuna variabile categorica
-    (limitate a top_n per leggibilita' su colonne ad alta cardinalita')."""
+    """barplot delle categorie piu' frequenti per ciascuna variabile categorica
+    (limitate a top_n per leggibilita' su colonne ad alta cardinalita')"""
     if not categorical_cols:
         return ""
 
@@ -115,7 +113,7 @@ def save_categorical_distributions_plot(df: pd.DataFrame, categorical_cols: list
 
 
 def save_correlation_heatmap(df: pd.DataFrame, numeric_cols: list, output_path: str) -> str:
-    """Heatmap delle correlazioni (Pearson) tra le variabili numeriche."""
+    """Heatmap delle correlazioni (Pearson) tra le variabili numeriche"""
     if len(numeric_cols) < 2:
         return ""
 
@@ -132,7 +130,7 @@ def save_correlation_heatmap(df: pd.DataFrame, numeric_cols: list, output_path: 
 
 def save_outliers_boxplot(df: pd.DataFrame, numeric_cols: list, output_path: str) -> str:
     """Boxplot per variabile numerica: rende visibile la presenza di outlier
-    (i punti oltre i baffi), coerente con il rilevamento IQR di quality_metrics.py."""
+    (i punti oltre i baffi :3 ), coerente con il rilevamento IQR di quality_metrics.py"""
     if not numeric_cols:
         return ""
 
@@ -155,7 +153,7 @@ def save_outliers_boxplot(df: pd.DataFrame, numeric_cols: list, output_path: str
 
 
 def generate_all_plots(df: pd.DataFrame, quality: dict, target_column: str, output_dir: str) -> dict:
-    """Orchestratore: genera tutti i grafici della Fase 1 e restituisce
+    """orchestratore: genera tutti i grafici della Fase 1 e restituisce
     un dizionario {nome_grafico: path} da inserire nel report di audit."""
     out_dir = Path(output_dir)
     numeric_cols = quality["numeric_columns"]
