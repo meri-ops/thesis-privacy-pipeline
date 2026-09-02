@@ -13,7 +13,7 @@ dataset:
   test_size: 0.2
 
 synthetic:
-  method: "gaussian_copula"  # gaussian_copula | ctgan
+  method: "ctgan"  # gaussian_copula | ctgan
   output_path: "data/synthetic/adult_synthetic.csv"
   ctgan_epochs: 100           # usato solo se method: ctgan
 

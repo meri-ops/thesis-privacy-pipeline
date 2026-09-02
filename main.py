@@ -77,7 +77,7 @@ def main():
 
     # --- Fase 3: validazione fedelta' ---
     quality_report, diagnostic_report = generate_reports(train_df, synthetic_df, metadata)
-    fidelity_summary = extract_fidelity_summary(quality_report, diagnostic_report)
+    fidelity_summary = extract_fidelity_summary(quality_report, diagnostic_report, train_df, synthetic_df)
     fidelity_plot_paths = generate_all_fidelity_plots(
         quality_report, train_df, synthetic_df, quality["numeric_columns"],
         fidelity_summary, config["report"]["output_dir"]
