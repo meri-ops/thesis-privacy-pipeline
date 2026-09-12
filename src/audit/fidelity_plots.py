@@ -1,4 +1,4 @@
-"""Fase 3 - Grafici di validazione fedelta': confronto visivo reale vs
+"""Fase 3: rafici di validazione fedelta': confronto visivo reale vs
 sintetico, per colonna e per correlazioni tra colonne.
 """
 from pathlib import Path

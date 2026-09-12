@@ -1,8 +1,6 @@
-"""Fase 4 - Training del modello.
+"""Fase 4: taining del modello.
 
 Il modello (tipo e iperparametri) e' interamente definito in config.yaml
-(sezione `model`), coerentemente con la filosofia "un solo config, nessun
-parametro hardcoded" della pipeline.
 """
 import pickle
 from pathlib import Path

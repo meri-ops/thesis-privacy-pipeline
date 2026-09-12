@@ -71,7 +71,7 @@ def generate_synthetic_data(synthesizer, n_rows: int, config: dict):
         config: configurazione globale dell'esperimento.
 
     ritorna:
-        tupla (synthetic_df, sample_seconds).
+        upla (synthetic_df, sample_seconds).
     """
     print(f"[synthetic] Genero {n_rows} righe sintetiche...")
     t0 = time.perf_counter()

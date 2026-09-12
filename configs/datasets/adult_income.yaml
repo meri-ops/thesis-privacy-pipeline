@@ -1,0 +1,16 @@
+# Solo l'identita' del dataset: tutto cio' che serve al loader e al resto
+# della pipeline per sapere COSA caricare, non COME processarlo (quello e'
+# in configs/base.yaml).
+
+dataset:
+  name: adult_income
+  source: openml
+  openml_name: adult
+  openml_version: 2
+  source_target_column: class
+  target_column: class
+  real_data_path: data/real/adult.csv
+  test_size: 0.2
+
+synthetic:
+  output_path: data/synthetic/adult_synthetic.csv

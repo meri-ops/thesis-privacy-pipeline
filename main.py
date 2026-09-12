@@ -18,16 +18,24 @@ Fasi eseguite:
 - Fase 5: audit trail. Report JSON completo (machine-readable) + report
   Markdown leggibile (report_generator.py), entrambi con hash SHA256 di
   dataset/train/test/sintetico/modello/config.
+
+Configurazione: risolta da configs/base.yaml + configs/datasets/<nome>.yaml
+(vedi src/utils/config.py::load_and_merge_config). Il dataset si sceglie
+con --dataset da riga di comando (default: adult_income). Questo script e'
+pensato per il debug/lancio di UN dataset alla volta; la campagna
+sperimentale completa (N dataset x 2 metodi) sara' gestita da
+run_experiments.py (Fase 3 del refactoring).
 """
+import argparse
 import json
 from datetime import datetime, timezone
 from pathlib import Path
 
 from sklearn.model_selection import train_test_split
 
-from src.utils.config import load_config
-from src.utils.hashing import sha256_of_file
-from src.ingestion.load_data import load_adult_income
+from src.utils.config import load_and_merge_config
+from src.utils.hashing import sha256_of_file, sha256_of_dict
+from src.ingestion.registry import load_dataset
 from src.audit.quality_metrics import compute_quality_report
 from src.audit.quality_plots import generate_all_plots
 from src.synthetic.generate import train_synthesizer, generate_synthetic_data
@@ -41,13 +49,13 @@ from src.training.train import train_model, save_model
 from src.training.evaluate import evaluate_model
 
 
-def main():
-    config = load_config("config.yaml")
-    config_hash = sha256_of_file("config.yaml")
+def main(dataset_name: str = "adult_income"):
+    config = load_and_merge_config(dataset_name)
+    config_hash = sha256_of_dict(config)
     target_col = config["dataset"]["target_column"]
 
     # --- Fase 1: ingestion ---
-    df = load_adult_income(config)
+    df = load_dataset(config)
 
     # --- Fase 1: quality assessment ---
     quality = compute_quality_report(df, target_col)
@@ -62,8 +70,8 @@ def main():
         df, test_size=test_size, random_state=seed, stratify=df[target_col]
     )
 
-    train_path = Path(config["dataset"]["real_data_path"]).parent / "adult_train.csv"
-    test_path = Path(config["dataset"]["real_data_path"]).parent / "adult_test.csv"
+    train_path = Path(config["dataset"]["real_data_path"]).parent / f"{dataset_name}_train.csv"
+    test_path = Path(config["dataset"]["real_data_path"]).parent / f"{dataset_name}_test.csv"
     train_df.to_csv(train_path, index=False)
     test_df.to_csv(test_path, index=False)
 
@@ -131,6 +139,10 @@ def main():
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "config_used": config,
         "config_sha256": config_hash,
+        "config_sources": {
+            "base_yaml_sha256": sha256_of_file("configs/base.yaml"),
+            "dataset_yaml_sha256": sha256_of_file(f"configs/datasets/{dataset_name}.yaml"),
+        },
         "dataset": {
             "path": config["dataset"]["real_data_path"],
             "sha256": dataset_hash,
@@ -173,7 +185,7 @@ def main():
     md_report_path = render_markdown_report(report, out_dir / "audit_report.md", json_filename=report_path.name)
 
     # --- riepilogo leggibile in console ---
-    print("\n=== Fase 1 completata ===")
+    print(f"\n=== Fase 1 completata (dataset: {dataset_name}) ===")
     print(f"Dataset: {quality['n_rows']} righe, {quality['n_cols']} colonne")
     print(f"Target '{target_col}' - class balance: {quality['class_balance_pct']}")
 
@@ -228,7 +240,7 @@ def main():
     print(f"\n=== Fase 5 completata (audit trail) ===")
     print(f"  Report JSON:     {report_path}")
     print(f"  Report Markdown: {md_report_path}")
-    print(f"  SHA256 config.yaml: {config_hash}")
+    print(f"  SHA256 config risolta: {config_hash}")
 
     print("\nGrafici salvati in:")
     for name, path in {**plot_paths, **fidelity_plot_paths, **privacy_plot_paths}.items():
@@ -237,4 +249,14 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(
+        description="Esegue la pipeline su un singolo dataset (per debug/lancio isolato; "
+                     "per la campagna multi-dataset usare run_experiments.py)."
+    )
+    parser.add_argument(
+        "--dataset", default="adult_income",
+        help="Nome del dataset: deve esistere configs/datasets/<nome>.yaml"
+    )
+    args = parser.parse_args()
+
+    main(dataset_name=args.dataset)
