@@ -8,3 +8,5 @@ jinja2>=3.1
 
 sdv>=1.17
 sdmetrics>=0.16
+torch>=2.0   # gia' presente come dipendenza transitiva di sdv (CTGAN); dichiarata qui perche'
+             # ora importata direttamente in src/pipeline.py per set_global_seed

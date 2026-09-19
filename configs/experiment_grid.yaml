@@ -1,0 +1,28 @@
+# Griglia di esperimenti per la campagna sperimentale multi-dataset (Fase 3
+# del refactoring). Un solo punto da cui decidere "cosa sto confrontando":
+# lo modifichi, non tocchi codice (run_experiments.py resta invariato).
+#
+# Stato attuale (item 7 del checklist di migrazione): un solo dataset
+# (adult_income), per isolare eventuali bug del nuovo schema di path da
+# quelli di un loader nuovo. Il secondo dataset (diabetes_130us) va
+# aggiunto qui SOLO dopo aver verificato che la griglia gira pulita su
+# adult_income con lo schema reports/runs/{dataset}/{metodo}/run_{n}/.
+
+datasets:
+  - adult_income
+  # - diabetes_130us   # da aggiungere all'item 8 del checklist di migrazione
+
+synthetic_methods:
+  - gaussian_copula
+  - ctgan
+
+# Per la RQ3 (riproducibilita'): quante volte ripetere la generazione con
+# lo STESSO seed (non seed diversi: l'obiettivo e' misurare se, a parita'
+# di seed, il risultato cambia comunque). Si applica solo a ctgan:
+# gaussian_copula, dopo il fix del seed globale
+# (src/pipeline.py::set_global_seed), e' atteso deterministico al 100% e
+# viene quindi eseguito una sola volta (replica_id = 0).
+repeats_for_reproducibility: 3
+
+model:
+  type: random_forest   # tenuto fisso: variabile di controllo, non parte del confronto
