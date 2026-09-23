@@ -7,6 +7,6 @@ seaborn>=0.12
 jinja2>=3.1
 
 sdv>=1.17
-sdmetrics>=0.16
+sdmetrics>=0.18   # DCROverfittingProtection introdotta in una versione >0.16; vedi discussione in chat
 torch>=2.0   # gia' presente come dipendenza transitiva di sdv (CTGAN); dichiarata qui perche'
              # ora importata direttamente in src/pipeline.py per set_global_seed

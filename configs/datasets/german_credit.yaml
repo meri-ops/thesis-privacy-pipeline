@@ -1,0 +1,30 @@
+# German Credit (Statlog), via OpenML, data_id fissato (non nome+versione:
+# "credit-g" e' un dataset molto noto e stabile, ma l'ID numerico resta il
+# modo piu' specifico per evitare ambiguita', vedi commento in
+# openml_loader.py).
+#
+# Terzo dataset, scelto per completare la mappa di complessita' rispetto ad
+# adult_income (molte righe, alcune categoriche) e breast_cancer (poche
+# righe, zero categoriche): German Credit occupa l'angolo complementare
+# "poche righe (1.000) + molte colonne categoriche (13 su 20)". Serve a
+# distinguere se il vantaggio di CTGAN osservato su Adult dipende dal
+# volume di dati o dalla presenza di categoriche, dato che i primi due
+# dataset variano entrambe le variabili insieme (confounding).
+#
+# Target 'class' (good/bad credit risk) gia' binario di suo (come
+# adult_income): nessuna binarizzazione necessaria. Sbilanciamento
+# moderato e ben noto: 700 good / 300 bad (70%/30%).
+
+dataset:
+  name: german_credit
+  source: openml
+  openml_data_id: 31
+  target_column: credit_risk    # rinominato da 'class': e' una parola riservata Python,
+                                  # rompeva NewRowSynthesis (numexpr non accetta 'class'
+                                  # come identificatore in una query interna di sdmetrics)
+  source_target_column: class    # nome originale della colonna nel dataset OpenML
+  real_data_path: data/real/german_credit.csv
+  test_size: 0.2
+
+synthetic:
+  output_path: data/synthetic/german_credit_synthetic.csv

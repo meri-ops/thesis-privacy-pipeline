@@ -1,0 +1,418 @@
+{
+  "timestamp": "2026-09-19T21:55:01.412952+00:00",
+  "config_used": {
+    "seed": 42,
+    "synthetic": {
+      "method": "ctgan",
+      "ctgan_epochs": 100,
+      "output_path": "data/synthetic/german_credit_synthetic.csv"
+    },
+    "model": {
+      "type": "random_forest",
+      "n_estimators": 200,
+      "max_depth": null,
+      "random_state": 42
+    },
+    "report": {
+      "output_dir": "reports/runs/german_credit/ctgan/run_2"
+    },
+    "dataset": {
+      "name": "german_credit",
+      "source": "openml",
+      "openml_data_id": 31,
+      "target_column": "class",
+      "source_target_column": "class",
+      "real_data_path": "data/real/german_credit.csv",
+      "test_size": 0.2
+    }
+  },
+  "config_sha256": "d4e255f0ec330ebd87437cad147b054e30b5aab1855aa0cab2d2e18a51cc6262",
+  "config_sources": {
+    "base_yaml_sha256": "f1d56509694a5195651eb0b3ccf3216d6725658131c6add883c8a396c7f4526b",
+    "dataset_yaml_sha256": "c2af6facfc73a9b511d31f3ef0ca1a5873d98aee063fa3dfd33be522cbe95428"
+  },
+  "dataset": {
+    "path": "data/real/german_credit.csv",
+    "sha256": "38b6dbf6fb4b0311a3ffc005730f42623128591fb36473ab3c22d270c0467632",
+    "quality_assessment": {
+      "n_rows": 1000,
+      "n_cols": 21,
+      "numeric_columns": [
+        "duration",
+        "credit_amount",
+        "installment_commitment",
+        "residence_since",
+        "age",
+        "existing_credits",
+        "num_dependents"
+      ],
+      "categorical_columns": [
+        "checking_status",
+        "credit_history",
+        "purpose",
+        "savings_status",
+        "employment",
+        "personal_status",
+        "other_parties",
+        "property_magnitude",
+        "other_payment_plans",
+        "housing",
+        "job",
+        "own_telephone",
+        "foreign_worker",
+        "class"
+      ],
+      "missing_values_pct": {
+        "checking_status": 0.0,
+        "duration": 0.0,
+        "credit_history": 0.0,
+        "purpose": 0.0,
+        "credit_amount": 0.0,
+        "savings_status": 0.0,
+        "employment": 0.0,
+        "installment_commitment": 0.0,
+        "personal_status": 0.0,
+        "other_parties": 0.0,
+        "residence_since": 0.0,
+        "property_magnitude": 0.0,
+        "age": 0.0,
+        "other_payment_plans": 0.0,
+        "housing": 0.0,
+        "existing_credits": 0.0,
+        "job": 0.0,
+        "num_dependents": 0.0,
+        "own_telephone": 0.0,
+        "foreign_worker": 0.0,
+        "class": 0.0
+      },
+      "target_column": "class",
+      "class_balance_pct": {
+        "good": 70.0,
+        "bad": 30.0
+      },
+      "numeric_summary": {
+        "duration": {
+          "count": 1000.0,
+          "mean": 20.9,
+          "std": 12.06,
+          "min": 4.0,
+          "25%": 12.0,
+          "50%": 18.0,
+          "75%": 24.0,
+          "max": 72.0
+        },
+        "credit_amount": {
+          "count": 1000.0,
+          "mean": 3271.26,
+          "std": 2822.74,
+          "min": 250.0,
+          "25%": 1365.5,
+          "50%": 2319.5,
+          "75%": 3972.25,
+          "max": 18424.0
+        },
+        "installment_commitment": {
+          "count": 1000.0,
+          "mean": 2.97,
+          "std": 1.12,
+          "min": 1.0,
+          "25%": 2.0,
+          "50%": 3.0,
+          "75%": 4.0,
+          "max": 4.0
+        },
+        "residence_since": {
+          "count": 1000.0,
+          "mean": 2.84,
+          "std": 1.1,
+          "min": 1.0,
+          "25%": 2.0,
+          "50%": 3.0,
+          "75%": 4.0,
+          "max": 4.0
+        },
+        "age": {
+          "count": 1000.0,
+          "mean": 35.55,
+          "std": 11.38,
+          "min": 19.0,
+          "25%": 27.0,
+          "50%": 33.0,
+          "75%": 42.0,
+          "max": 75.0
+        },
+        "existing_credits": {
+          "count": 1000.0,
+          "mean": 1.41,
+          "std": 0.58,
+          "min": 1.0,
+          "25%": 1.0,
+          "50%": 1.0,
+          "75%": 2.0,
+          "max": 4.0
+        },
+        "num_dependents": {
+          "count": 1000.0,
+          "mean": 1.16,
+          "std": 0.36,
+          "min": 1.0,
+          "25%": 1.0,
+          "50%": 1.0,
+          "75%": 1.0,
+          "max": 2.0
+        }
+      },
+      "outliers": {
+        "duration": {
+          "n_outliers": 70,
+          "pct_outliers": 7.0,
+          "lower_bound": -6.0,
+          "upper_bound": 42.0
+        },
+        "credit_amount": {
+          "n_outliers": 72,
+          "pct_outliers": 7.2,
+          "lower_bound": -2544.62,
+          "upper_bound": 7882.38
+        },
+        "installment_commitment": {
+          "n_outliers": 0,
+          "pct_outliers": 0.0,
+          "lower_bound": -1.0,
+          "upper_bound": 7.0
+        },
+        "residence_since": {
+          "n_outliers": 0,
+          "pct_outliers": 0.0,
+          "lower_bound": -1.0,
+          "upper_bound": 7.0
+        },
+        "age": {
+          "n_outliers": 23,
+          "pct_outliers": 2.3,
+          "lower_bound": 4.5,
+          "upper_bound": 64.5
+        },
+        "existing_credits": {
+          "n_outliers": 6,
+          "pct_outliers": 0.6,
+          "lower_bound": -0.5,
+          "upper_bound": 3.5
+        },
+        "num_dependents": {
+          "n_outliers": 155,
+          "pct_outliers": 15.5,
+          "lower_bound": 1.0,
+          "upper_bound": 1.0
+        }
+      },
+      "correlation_matrix": {
+        "duration": {
+          "duration": 1.0,
+          "credit_amount": 0.625,
+          "installment_commitment": 0.075,
+          "residence_since": 0.034,
+          "age": -0.036,
+          "existing_credits": -0.011,
+          "num_dependents": -0.024
+        },
+        "credit_amount": {
+          "duration": 0.625,
+          "credit_amount": 1.0,
+          "installment_commitment": -0.271,
+          "residence_since": 0.029,
+          "age": 0.033,
+          "existing_credits": 0.021,
+          "num_dependents": 0.017
+        },
+        "installment_commitment": {
+          "duration": 0.075,
+          "credit_amount": -0.271,
+          "installment_commitment": 1.0,
+          "residence_since": 0.049,
+          "age": 0.058,
+          "existing_credits": 0.022,
+          "num_dependents": -0.071
+        },
+        "residence_since": {
+          "duration": 0.034,
+          "credit_amount": 0.029,
+          "installment_commitment": 0.049,
+          "residence_since": 1.0,
+          "age": 0.266,
+          "existing_credits": 0.09,
+          "num_dependents": 0.043
+        },
+        "age": {
+          "duration": -0.036,
+          "credit_amount": 0.033,
+          "installment_commitment": 0.058,
+          "residence_since": 0.266,
+          "age": 1.0,
+          "existing_credits": 0.149,
+          "num_dependents": 0.118
+        },
+        "existing_credits": {
+          "duration": -0.011,
+          "credit_amount": 0.021,
+          "installment_commitment": 0.022,
+          "residence_since": 0.09,
+          "age": 0.149,
+          "existing_credits": 1.0,
+          "num_dependents": 0.11
+        },
+        "num_dependents": {
+          "duration": -0.024,
+          "credit_amount": 0.017,
+          "installment_commitment": -0.071,
+          "residence_since": 0.043,
+          "age": 0.118,
+          "existing_credits": 0.11,
+          "num_dependents": 1.0
+        }
+      }
+    }
+  },
+  "split": {
+    "test_size": 0.2,
+    "seed": 42,
+    "train_path": "data/real/german_credit_train.csv",
+    "train_sha256": "72d0854ae9a9409f1bbc3e12125f6444d89f02727b94662fb05d6d5b2c4b2cfc",
+    "train_n_rows": 800,
+    "test_path": "data/real/german_credit_test.csv",
+    "test_sha256": "a81103bc4c1be0ac3642f66c45a9e11f03a13b463be1d359ca8b9d22757fbd68",
+    "test_n_rows": 200
+  },
+  "synthetic": {
+    "method": "ctgan",
+    "output_path": "data/synthetic/german_credit_synthetic.csv",
+    "sha256": "8c31664d53999d66e5597e5e6c8d371b841d90752bebd7ed48e9b0857d0c5727",
+    "n_rows": 800,
+    "fit_seconds": 11.54,
+    "sample_seconds": 0.15
+  },
+  "fidelity": {
+    "overall_quality_score": 0.8514,
+    "column_shapes_score": 0.9202,
+    "column_shapes_per_column": {
+      "checking_status": 0.8875,
+      "duration": 0.8012,
+      "credit_history": 0.9425,
+      "purpose": 0.8112,
+      "credit_amount": 0.81,
+      "savings_status": 0.985,
+      "employment": 0.9125,
+      "installment_commitment": 0.8988,
+      "personal_status": 0.8288,
+      "other_parties": 0.9662,
+      "residence_since": 0.9075,
+      "property_magnitude": 0.9525,
+      "age": 0.89,
+      "other_payment_plans": 0.9812,
+      "housing": 0.9625,
+      "existing_credits": 0.9225,
+      "job": 0.9325,
+      "num_dependents": 0.9812,
+      "own_telephone": 0.9975,
+      "foreign_worker": 0.985,
+      "class": 0.9688
+    },
+    "column_pair_trends_score": 0.7826,
+    "diagnostic": {
+      "overall_diagnostic_score": 1.0,
+      "data_validity_score": 1.0,
+      "data_validity_per_column": {
+        "checking_status": 1.0,
+        "duration": 1.0,
+        "credit_history": 1.0,
+        "purpose": 1.0,
+        "credit_amount": 1.0,
+        "savings_status": 1.0,
+        "employment": 1.0,
+        "installment_commitment": 1.0,
+        "personal_status": 1.0,
+        "other_parties": 1.0,
+        "residence_since": 1.0,
+        "property_magnitude": 1.0,
+        "age": 1.0,
+        "other_payment_plans": 1.0,
+        "housing": 1.0,
+        "existing_credits": 1.0,
+        "job": 1.0,
+        "num_dependents": 1.0,
+        "own_telephone": 1.0,
+        "foreign_worker": 1.0,
+        "class": 1.0
+      },
+      "data_structure_score": 1.0
+    },
+    "privacy_basic_check": {
+      "n_exact_duplicates": 0,
+      "pct_exact_duplicates_over_synthetic": 0.0
+    }
+  },
+  "privacy": {
+    "exact_duplicates": {
+      "n_exact_duplicates": 0,
+      "pct_exact_duplicates_over_synthetic": 0.0
+    },
+    "new_row_synthesis": {
+      "status": "ok",
+      "score": 1.0,
+      "numerical_match_tolerance": 0.01,
+      "synthetic_sample_size": 800,
+      "interpretation": "Frazione di righe sintetiche che non sono quasi-duplicati di nessuna riga reale. Valore vicino a 1 = buono (righe per lo piu' 'nuove'); valore basso = molte righe sintetiche sono troppo simili a righe reali specifiche."
+    },
+    "dcr_overfitting_protection": {
+      "status": "error",
+      "reason": "DCROverfittingProtection.compute_breakdown() missing 1 required positional argument: 'table_name'. Se l'errore riguarda i nomi dei parametri, la firma di DCROverfittingProtection.compute_breakdown potrebbe differire nella versione di sdmetrics installata: verificare con `help(DCROverfittingProtection.compute_breakdown)` e aggiornare i nomi dei kwargs in questa funzione di conseguenza."
+    }
+  },
+  "target_encoding": {
+    "classes": [
+      "bad",
+      "good"
+    ]
+  },
+  "experiments": {
+    "experiment_A_real": {
+      "train_n_rows": 800,
+      "model_type": "random_forest",
+      "model_path": "reports/runs/german_credit/ctgan/run_2/models/experiment_A_real.pkl",
+      "model_sha256": "62c1a0cdb088833bbce8c6778cb6a3644692de9602f410894ef6d4f977a8d645",
+      "metrics": {
+        "accuracy": 0.745,
+        "precision": 0.7834,
+        "recall": 0.8786,
+        "f1": 0.8283,
+        "auc_roc": 0.7832
+      }
+    },
+    "experiment_B_synthetic": {
+      "train_n_rows": 800,
+      "model_type": "random_forest",
+      "model_path": "reports/runs/german_credit/ctgan/run_2/models/experiment_B_synthetic.pkl",
+      "model_sha256": "c4ba9c3f34fc9b153ce39cb3d01a85c790919c0ed3e9f87772d9900d29ed09dd",
+      "metrics": {
+        "accuracy": 0.705,
+        "precision": 0.7056,
+        "recall": 0.9929,
+        "f1": 0.8249,
+        "auc_roc": 0.527
+      }
+    }
+  },
+  "plots": {
+    "target_balance": "reports/runs/german_credit/ctgan/run_2/target_balance.png",
+    "missing_values": "",
+    "numeric_distributions": "reports/runs/german_credit/ctgan/run_2/numeric_distributions.png",
+    "categorical_distributions": "reports/runs/german_credit/ctgan/run_2/categorical_distributions.png",
+    "correlation_heatmap": "reports/runs/german_credit/ctgan/run_2/correlation_heatmap.png",
+    "outliers_boxplot": "reports/runs/german_credit/ctgan/run_2/outliers_boxplot.png",
+    "column_shapes": "reports/runs/german_credit/ctgan/run_2/fidelity_column_shapes.png",
+    "column_pair_trends": "reports/runs/german_credit/ctgan/run_2/fidelity_column_pair_trends.png",
+    "real_vs_synthetic_distributions": "reports/runs/german_credit/ctgan/run_2/fidelity_real_vs_synthetic.png",
+    "quality_scores_summary": "reports/runs/german_credit/ctgan/run_2/fidelity_scores_summary.png",
+    "privacy_scores_summary": "reports/runs/german_credit/ctgan/run_2/privacy_scores_summary.png"
+  }
+}

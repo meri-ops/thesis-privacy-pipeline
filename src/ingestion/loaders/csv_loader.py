@@ -1,4 +1,4 @@
-"""Loader generico per dataset gia' distribuiti come CSV 
+"""Loader generico per dataset gia' distribuiti come CSV
 
 Se config['dataset']['csv_url'] e' presente, il loader prova a scaricare
 il file la prima volta; altrimenti si aspetta che il CSV sia gia' in
@@ -10,6 +10,8 @@ import pandas as pd
 
 from src.ingestion.loaders.common import (
     normalize_target_column,
+    binarize_target_column,
+    drop_columns,
     ensure_parent_dir,
     load_cached_csv_if_exists,
 )
@@ -35,7 +37,10 @@ def load(config: dict) -> pd.DataFrame:
         df.to_csv(real_path, index=False)
         print(f"[ingestion] Dataset salvato in {real_path} ({df.shape[0]} righe, {df.shape[1]} colonne)")
 
+    df = drop_columns(df, ds_cfg.get("columns_to_drop"))
+
     target_col = ds_cfg["target_column"]
     df = normalize_target_column(df, target_col, ds_cfg.get("source_target_column"))
+    df = binarize_target_column(df, target_col, ds_cfg.get("target_positive_values"))
 
     return df

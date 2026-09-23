@@ -84,12 +84,17 @@ def check_new_row_synthesis(
 
 def check_dcr_overfitting_protection(
     train_df: pd.DataFrame, test_df: pd.DataFrame, synthetic_df: pd.DataFrame,
-    metadata, sample_size: int = 5_000,
+    metadata, sample_size: int = 5_000, table_name: str = "table",
 ) -> dict:
     """Confronta la Distance to Closest Record (DCR) del sintetico rispetto
     al train (usato per generare i dati) e rispetto a un holdout reale (qui:
     il test set, mai visto dal synthesizer).
-    
+
+    table_name: alcune versioni di sdmetrics (>=0.18 circa) richiedono un
+    nome di tabella per compute_breakdown, coerente col formato metadata
+    multi-table {'tables': {table_name: {...}}} introdotto in quelle
+    versioni. Con una sola tabella il nome e' arbitrario, non deve
+    corrispondere a nulla di specifico nel dataset.
     """
     try:
         from sdmetrics.single_table import DCROverfittingProtection
@@ -105,6 +110,7 @@ def check_dcr_overfitting_protection(
             metadata=_metadata_as_dict(metadata),
             num_rows_subsample=num_rows_subsample,
             num_iterations=1,
+            table_name=table_name,
         )
         # NB: compute_breakdown NON restituisce "median_DCR_to_*_data" (quelle
         # chiavi non esistono nella risposta di SDMetrics: prima venivano

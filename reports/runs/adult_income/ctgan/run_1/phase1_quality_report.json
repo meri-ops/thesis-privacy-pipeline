@@ -1,0 +1,364 @@
+{
+  "timestamp": "2026-09-19T12:31:38.517313+00:00",
+  "config_used": {
+    "seed": 42,
+    "synthetic": {
+      "method": "ctgan",
+      "ctgan_epochs": 100,
+      "output_path": "data/synthetic/adult_synthetic.csv"
+    },
+    "model": {
+      "type": "random_forest",
+      "n_estimators": 200,
+      "max_depth": null,
+      "random_state": 42
+    },
+    "report": {
+      "output_dir": "reports/runs/adult_income/ctgan/run_1"
+    },
+    "dataset": {
+      "name": "adult_income",
+      "source": "openml",
+      "openml_name": "adult",
+      "openml_version": 2,
+      "source_target_column": "class",
+      "target_column": "class",
+      "real_data_path": "data/real/adult.csv",
+      "test_size": 0.2
+    }
+  },
+  "config_sha256": "f0aa2d5c9877feb38332ddc4cc03a4fa54712b13de827c7495b84c65327d5ddb",
+  "config_sources": {
+    "base_yaml_sha256": "f1d56509694a5195651eb0b3ccf3216d6725658131c6add883c8a396c7f4526b",
+    "dataset_yaml_sha256": "7fec9c8e991308c998e5d8920e9f2652e4d9f47ad6513b4c064d2e765b2c512b"
+  },
+  "dataset": {
+    "path": "data/real/adult.csv",
+    "sha256": "d273d956c28eba72241f69dcbb78e37e93862248503a1873fb44b9fc2a6ae00b",
+    "quality_assessment": {
+      "n_rows": 48842,
+      "n_cols": 15,
+      "numeric_columns": [
+        "age",
+        "fnlwgt",
+        "education-num",
+        "capital-gain",
+        "capital-loss",
+        "hours-per-week"
+      ],
+      "categorical_columns": [
+        "workclass",
+        "education",
+        "marital-status",
+        "occupation",
+        "relationship",
+        "race",
+        "sex",
+        "native-country",
+        "class"
+      ],
+      "missing_values_pct": {
+        "age": 0.0,
+        "workclass": 5.73,
+        "fnlwgt": 0.0,
+        "education": 0.0,
+        "education-num": 0.0,
+        "marital-status": 0.0,
+        "occupation": 5.75,
+        "relationship": 0.0,
+        "race": 0.0,
+        "sex": 0.0,
+        "capital-gain": 0.0,
+        "capital-loss": 0.0,
+        "hours-per-week": 0.0,
+        "native-country": 1.75,
+        "class": 0.0
+      },
+      "target_column": "class",
+      "class_balance_pct": {
+        "<=50K": 76.07,
+        ">50K": 23.93
+      },
+      "numeric_summary": {
+        "age": {
+          "count": 48842.0,
+          "mean": 38.64,
+          "std": 13.71,
+          "min": 17.0,
+          "25%": 28.0,
+          "50%": 37.0,
+          "75%": 48.0,
+          "max": 90.0
+        },
+        "fnlwgt": {
+          "count": 48842.0,
+          "mean": 189664.13,
+          "std": 105604.03,
+          "min": 12285.0,
+          "25%": 117550.5,
+          "50%": 178144.5,
+          "75%": 237642.0,
+          "max": 1490400.0
+        },
+        "education-num": {
+          "count": 48842.0,
+          "mean": 10.08,
+          "std": 2.57,
+          "min": 1.0,
+          "25%": 9.0,
+          "50%": 10.0,
+          "75%": 12.0,
+          "max": 16.0
+        },
+        "capital-gain": {
+          "count": 48842.0,
+          "mean": 1079.07,
+          "std": 7452.02,
+          "min": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "max": 99999.0
+        },
+        "capital-loss": {
+          "count": 48842.0,
+          "mean": 87.5,
+          "std": 403.0,
+          "min": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "max": 4356.0
+        },
+        "hours-per-week": {
+          "count": 48842.0,
+          "mean": 40.42,
+          "std": 12.39,
+          "min": 1.0,
+          "25%": 40.0,
+          "50%": 40.0,
+          "75%": 45.0,
+          "max": 99.0
+        }
+      },
+      "outliers": {
+        "age": {
+          "n_outliers": 216,
+          "pct_outliers": 0.44,
+          "lower_bound": -2.0,
+          "upper_bound": 78.0
+        },
+        "fnlwgt": {
+          "n_outliers": 1453,
+          "pct_outliers": 2.97,
+          "lower_bound": -62586.75,
+          "upper_bound": 417779.25
+        },
+        "education-num": {
+          "n_outliers": 1794,
+          "pct_outliers": 3.67,
+          "lower_bound": 4.5,
+          "upper_bound": 16.5
+        },
+        "capital-gain": {
+          "n_outliers": 4035,
+          "pct_outliers": 8.26,
+          "lower_bound": 0.0,
+          "upper_bound": 0.0
+        },
+        "capital-loss": {
+          "n_outliers": 2282,
+          "pct_outliers": 4.67,
+          "lower_bound": 0.0,
+          "upper_bound": 0.0
+        },
+        "hours-per-week": {
+          "n_outliers": 13496,
+          "pct_outliers": 27.63,
+          "lower_bound": 32.5,
+          "upper_bound": 52.5
+        }
+      },
+      "correlation_matrix": {
+        "age": {
+          "age": 1.0,
+          "fnlwgt": -0.077,
+          "education-num": 0.031,
+          "capital-gain": 0.077,
+          "capital-loss": 0.057,
+          "hours-per-week": 0.072
+        },
+        "fnlwgt": {
+          "age": -0.077,
+          "fnlwgt": 1.0,
+          "education-num": -0.039,
+          "capital-gain": -0.004,
+          "capital-loss": -0.004,
+          "hours-per-week": -0.014
+        },
+        "education-num": {
+          "age": 0.031,
+          "fnlwgt": -0.039,
+          "education-num": 1.0,
+          "capital-gain": 0.125,
+          "capital-loss": 0.081,
+          "hours-per-week": 0.144
+        },
+        "capital-gain": {
+          "age": 0.077,
+          "fnlwgt": -0.004,
+          "education-num": 0.125,
+          "capital-gain": 1.0,
+          "capital-loss": -0.031,
+          "hours-per-week": 0.082
+        },
+        "capital-loss": {
+          "age": 0.057,
+          "fnlwgt": -0.004,
+          "education-num": 0.081,
+          "capital-gain": -0.031,
+          "capital-loss": 1.0,
+          "hours-per-week": 0.054
+        },
+        "hours-per-week": {
+          "age": 0.072,
+          "fnlwgt": -0.014,
+          "education-num": 0.144,
+          "capital-gain": 0.082,
+          "capital-loss": 0.054,
+          "hours-per-week": 1.0
+        }
+      }
+    }
+  },
+  "split": {
+    "test_size": 0.2,
+    "seed": 42,
+    "train_path": "data/real/adult_income_train.csv",
+    "train_sha256": "05c231c99941a5af31e0cbb3c43a7c1016f6c23586146064861b8df8d4a83f64",
+    "train_n_rows": 39073,
+    "test_path": "data/real/adult_income_test.csv",
+    "test_sha256": "1694e1dee59c50e13a1ce80e99bb4344d6d4c2015ed0d525917927bb13693b48",
+    "test_n_rows": 9769
+  },
+  "synthetic": {
+    "method": "ctgan",
+    "output_path": "data/synthetic/adult_synthetic.csv",
+    "sha256": "04a6f90eb419f8a42dfc1c207e477ba7ed227a3b81b8f79b9fa41ba53bac6d76",
+    "n_rows": 39073,
+    "fit_seconds": 732.31,
+    "sample_seconds": 1.22
+  },
+  "fidelity": {
+    "overall_quality_score": 0.8811,
+    "column_shapes_score": 0.9046,
+    "column_shapes_per_column": {
+      "age": 0.96,
+      "workclass": 0.9398,
+      "fnlwgt": 0.8927,
+      "education": 0.9182,
+      "education-num": 0.9489,
+      "marital-status": 0.8679,
+      "occupation": 0.8775,
+      "relationship": 0.9153,
+      "race": 0.9443,
+      "sex": 0.9348,
+      "capital-gain": 0.7461,
+      "capital-loss": 0.8243,
+      "hours-per-week": 0.9406,
+      "native-country": 0.8681,
+      "class": 0.9904
+    },
+    "column_pair_trends_score": 0.8575,
+    "diagnostic": {
+      "overall_diagnostic_score": 1.0,
+      "data_validity_score": 1.0,
+      "data_validity_per_column": {
+        "age": 1.0,
+        "workclass": 1.0,
+        "fnlwgt": 1.0,
+        "education": 1.0,
+        "education-num": 1.0,
+        "marital-status": 1.0,
+        "occupation": 1.0,
+        "relationship": 1.0,
+        "race": 1.0,
+        "sex": 1.0,
+        "capital-gain": 1.0,
+        "capital-loss": 1.0,
+        "hours-per-week": 1.0,
+        "native-country": 1.0,
+        "class": 1.0
+      },
+      "data_structure_score": 1.0
+    },
+    "privacy_basic_check": {
+      "n_exact_duplicates": 0,
+      "pct_exact_duplicates_over_synthetic": 0.0
+    }
+  },
+  "privacy": {
+    "exact_duplicates": {
+      "n_exact_duplicates": 0,
+      "pct_exact_duplicates_over_synthetic": 0.0
+    },
+    "new_row_synthesis": {
+      "status": "ok",
+      "score": 0.999,
+      "numerical_match_tolerance": 0.01,
+      "synthetic_sample_size": 10000,
+      "interpretation": "Frazione di righe sintetiche che non sono quasi-duplicati di nessuna riga reale. Valore vicino a 1 = buono (righe per lo piu' 'nuove'); valore basso = molte righe sintetiche sono troppo simili a righe reali specifiche."
+    },
+    "dcr_overfitting_protection": {
+      "status": "error",
+      "reason": "DCROverfittingProtection.compute_breakdown() missing 1 required positional argument: 'table_name'. Se l'errore riguarda i nomi dei parametri, la firma di DCROverfittingProtection.compute_breakdown potrebbe differire nella versione di sdmetrics installata: verificare con `help(DCROverfittingProtection.compute_breakdown)` e aggiornare i nomi dei kwargs in questa funzione di conseguenza."
+    }
+  },
+  "target_encoding": {
+    "classes": [
+      "<=50K",
+      ">50K"
+    ]
+  },
+  "experiments": {
+    "experiment_A_real": {
+      "train_n_rows": 39073,
+      "model_type": "random_forest",
+      "model_path": "reports/runs/adult_income/ctgan/run_1/models/experiment_A_real.pkl",
+      "model_sha256": "4019fba405d981e4bc1afef55ec96eb60ed5528c3436c22db1ce954a838ad788",
+      "metrics": {
+        "accuracy": 0.8576,
+        "precision": 0.739,
+        "recall": 0.6262,
+        "f1": 0.6779,
+        "auc_roc": 0.9055
+      }
+    },
+    "experiment_B_synthetic": {
+      "train_n_rows": 39073,
+      "model_type": "random_forest",
+      "model_path": "reports/runs/adult_income/ctgan/run_1/models/experiment_B_synthetic.pkl",
+      "model_sha256": "f524ca1d726157e67ce21ef88d99cdffa9c2909d9407499303784748747cce3e",
+      "metrics": {
+        "accuracy": 0.8323,
+        "precision": 0.6689,
+        "recall": 0.5928,
+        "f1": 0.6286,
+        "auc_roc": 0.8711
+      }
+    }
+  },
+  "plots": {
+    "target_balance": "reports/runs/adult_income/ctgan/run_1/target_balance.png",
+    "missing_values": "reports/runs/adult_income/ctgan/run_1/missing_values.png",
+    "numeric_distributions": "reports/runs/adult_income/ctgan/run_1/numeric_distributions.png",
+    "categorical_distributions": "reports/runs/adult_income/ctgan/run_1/categorical_distributions.png",
+    "correlation_heatmap": "reports/runs/adult_income/ctgan/run_1/correlation_heatmap.png",
+    "outliers_boxplot": "reports/runs/adult_income/ctgan/run_1/outliers_boxplot.png",
+    "column_shapes": "reports/runs/adult_income/ctgan/run_1/fidelity_column_shapes.png",
+    "column_pair_trends": "reports/runs/adult_income/ctgan/run_1/fidelity_column_pair_trends.png",
+    "real_vs_synthetic_distributions": "reports/runs/adult_income/ctgan/run_1/fidelity_real_vs_synthetic.png",
+    "quality_scores_summary": "reports/runs/adult_income/ctgan/run_1/fidelity_scores_summary.png",
+    "privacy_scores_summary": "reports/runs/adult_income/ctgan/run_1/privacy_scores_summary.png"
+  }
+}

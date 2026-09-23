@@ -24,6 +24,43 @@ def normalize_target_column(
     )
 
 
+def drop_columns(df: pd.DataFrame, columns_to_drop: Optional[list] = None) -> pd.DataFrame:
+    """Rimuove le colonne indicate (se presenti) prima che il resto della
+    pipeline le veda: identificativi senza valore predittivo (rischio di
+    leakage/overfitting se lasciati dentro), o colonne con missing values
+    troppo estesi per essere utili senza un'imputazione dedicata.
+
+    No-op se columns_to_drop e' None o vuoto: adult_income non lo usa,
+    resta invariato.
+    """
+    if not columns_to_drop:
+        return df
+    existing = [c for c in columns_to_drop if c in df.columns]
+    return df.drop(columns=existing)
+
+
+def binarize_target_column(
+    df: pd.DataFrame, target_column: str, positive_values: Optional[list] = None
+) -> pd.DataFrame:
+    """Rimappa un target a piu' di 2 classi in binario: 1 se il valore
+    originale e' in positive_values, 0 altrimenti.
+
+    Necessario perche' il resto della pipeline (src/training/evaluate.py)
+    assume esplicitamente un target a 2 classi (precision/recall/f1 in
+    modalita' 'binary', AUC-ROC con predict_proba[:, 1]): un target a 3+
+    classi lascito cosi' com'e' o solleva un errore in fase di valutazione,
+    o (peggio) produce un AUC-ROC silenziosamente sbagliato.
+
+    No-op se positive_values e' None: adult_income e' gia' binario di suo,
+    resta invariato.
+    """
+    if not positive_values:
+        return df
+    df = df.copy()
+    df[target_column] = df[target_column].isin(positive_values).astype(int)
+    return df
+
+
 def ensure_parent_dir(path) -> Path:
     """Crea la cartella padre di `path` se non esiste e ritorna il Path."""
     p = Path(path)

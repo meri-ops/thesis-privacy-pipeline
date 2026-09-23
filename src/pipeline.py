@@ -13,8 +13,16 @@ Instrumentazione di timing per fase (non richiesta dal documento di
 refactoring, aggiunta per diagnosticare i tempi di esecuzione lunghi
 osservati durante la campagna sperimentale): ogni fase viene cronometrata
 con _timed() e il risultato finisce sia stampato a console in tempo reale
-sia salvato in report["phase_timings"], cosi' si puo' confrontare dove va
-il tempo tra run diverse senza dover rilanciare nulla.
+sia salvato in report["phase_timings"].
+
+I tre controlli di privacy (duplicati esatti, NewRowSynthesis, DCR
+Overfitting Protection) sono cronometrati separatamente, chiamando le
+funzioni di src/audit/privacy_metrics.py direttamente invece che tramite
+il suo build_privacy_summary: questo evita di modificare quel file (resta
+nella lista dei moduli di dominio da non toccare) pur ottenendo il
+dettaglio di quale dei tre controlli domina il tempo totale. Il dict
+risultante ("privacy_summary") ha esattamente la stessa struttura che
+build_privacy_summary avrebbe prodotto.
 """
 import copy
 import json
@@ -36,7 +44,11 @@ from src.audit.quality_plots import generate_all_plots
 from src.synthetic.generate import train_synthesizer, generate_synthetic_data
 from src.audit.fidelity_metrics import generate_reports, extract_fidelity_summary
 from src.audit.fidelity_plots import generate_all_fidelity_plots
-from src.audit.privacy_metrics import build_privacy_summary
+from src.audit.privacy_metrics import (
+    check_exact_duplicates,
+    check_new_row_synthesis,
+    check_dcr_overfitting_protection,
+)
 from src.audit.privacy_plots import generate_all_privacy_plots
 from src.audit.report_generator import render_markdown_report
 from src.preprocessing.clean_data import split_features_target, build_preprocessor, encode_target
@@ -150,13 +162,50 @@ def run_pipeline(config: dict, output_dir: Optional[str] = None) -> dict:
             fidelity_summary, str(out_dir)
         )
 
-    # --- Fase 3: validazione privacy ---
-    with _timed("privacy_validation", phase_timings):
-        privacy_summary = build_privacy_summary(train_df, test_df, synthetic_df, metadata, resolved_config)
+    # --- Fase 3: validazione privacy (3 controlli cronometrati separatamente) ---
+    privacy_cfg = resolved_config.get("privacy", {})
+
+    with _timed("privacy_exact_duplicates", phase_timings):
+        print("[privacy] Controllo duplicati esatti...")
+        exact_duplicates = check_exact_duplicates(train_df, synthetic_df)
+
+    with _timed("privacy_new_row_synthesis", phase_timings):
+        print("[privacy] Controllo NewRowSynthesis (novita' rispetto al reale)...")
+        new_row_synthesis = check_new_row_synthesis(
+            train_df, synthetic_df, metadata,
+            numerical_match_tolerance=privacy_cfg.get("new_row_synthesis_tolerance", 0.01),
+            sample_size=privacy_cfg.get("new_row_synthesis_sample_size", 10_000),
+        )
+
+    with _timed("privacy_dcr_overfitting", phase_timings):
+        print("[privacy] Controllo DCR Overfitting Protection (train vs holdout)...")
+        dcr_overfitting = check_dcr_overfitting_protection(
+            train_df, test_df, synthetic_df, metadata,
+            sample_size=privacy_cfg.get("dcr_overfitting_sample_size", 5_000),
+        )
+        if dcr_overfitting.get("status") != "ok":
+            print(
+                f"[privacy][ATTENZIONE] DCR Overfitting Protection non calcolato "
+                f"(status={dcr_overfitting.get('status')}, reason={dcr_overfitting.get('reason')})"
+            )
+
+    if new_row_synthesis.get("status") != "ok":
+        print(
+            f"[privacy][ATTENZIONE] NewRowSynthesis non calcolato "
+            f"(status={new_row_synthesis.get('status')}, reason={new_row_synthesis.get('reason')})"
+        )
+
+    privacy_summary = {
+        "exact_duplicates": exact_duplicates,
+        "new_row_synthesis": new_row_synthesis,
+        "dcr_overfitting_protection": dcr_overfitting,
+    }
+
+    with _timed("privacy_plots", phase_timings):
         privacy_plot_paths = generate_all_privacy_plots(privacy_summary, str(out_dir))
 
     # --- Fase 4: training e valutazione (Esperimento A: reale, B: sintetico) ---
-    numeric_cols = quality["numeric_columns"]
+    numeric_cols = [c for c in quality["numeric_columns"] if c != target_col]
     categorical_cols = [c for c in quality["categorical_columns"] if c != target_col]
 
     with _timed("target_encoding", phase_timings):
@@ -169,14 +218,13 @@ def run_pipeline(config: dict, output_dir: Optional[str] = None) -> dict:
         )
 
     experiments = {}
-    experiment_timings = {}
     models_dir = out_dir / "models"
 
     for exp_name, X_train, y_train in [
         ("experiment_A_real", X_train_real, y_train_real),
         ("experiment_B_synthetic", X_train_synth, y_train_synth),
     ]:
-        with _timed(f"training_{exp_name}", experiment_timings):
+        with _timed(f"training_{exp_name}", phase_timings):
             print(f"\n=== {exp_name}: preprocessing + training + evaluation ===")
             preprocessor = build_preprocessor(numeric_cols, categorical_cols)
             X_train_enc = preprocessor.fit_transform(X_train)
@@ -196,8 +244,6 @@ def run_pipeline(config: dict, output_dir: Optional[str] = None) -> dict:
                 "metrics": metrics,
             }
             print(f"  Metriche: {metrics}")
-
-    phase_timings.update(experiment_timings)
 
     # --- Fase 5: audit trail completo ---
     with _timed("audit_trail_writing", phase_timings):

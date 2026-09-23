@@ -1,0 +1,21 @@
+# Griglia ridotta: SOLO german_credit.
+#
+# Usata per completare la campagna a 3 dataset dopo che adult_income e
+# breast_cancer erano gia' stati completati separatamente. Evita di rifare
+# run gia' fatti (run_experiments.py non ha logica di resume automatico).
+#
+# I risultati finiranno in reports/runs/german_credit/... e in un NUOVO
+# reports/runs_index.jsonl da unire con quelli gia' scaricati (stessa
+# procedura gia' fatta per adult_income + breast_cancer).
+
+datasets:
+  - german_credit
+
+synthetic_methods:
+  - gaussian_copula
+  - ctgan
+
+repeats_for_reproducibility: 3
+
+model:
+  type: random_forest

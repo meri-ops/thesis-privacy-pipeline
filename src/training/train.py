@@ -19,6 +19,11 @@ def build_model(config: dict):
             n_estimators=model_cfg.get("n_estimators", 200),
             max_depth=model_cfg.get("max_depth"),
             random_state=model_cfg.get("random_state", 42),
+            # n_jobs non e' un iperparametro del modello (non cambia gli
+            # alberi costruiti, a random_state fissato): controlla solo
+            # quanti core usare per costruirli. Default -1 = tutti i core
+            # disponibili, per non lasciare la macchina single-thread.
+            n_jobs=model_cfg.get("n_jobs", -1),
         )
     elif model_type == "logistic_regression":
         return LogisticRegression(

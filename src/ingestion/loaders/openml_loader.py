@@ -11,6 +11,7 @@ from src.ingestion.loaders.common import (
     normalize_target_column,
     ensure_parent_dir,
     load_cached_csv_if_exists,
+    drop_columns,
 )
 
 
@@ -22,18 +23,36 @@ def load(config: dict) -> pd.DataFrame:
 
     cached = load_cached_csv_if_exists(real_path)
     if cached is not None:
-        return cached
+        # Anche sulla cache: se target_column e' cambiato in config dopo che
+        # il CSV era gia' stato salvato (es. rinominata una colonna target),
+        # normalize_target_column e' un no-op se gia' a posto, altrimenti
+        # rinomina - evita un KeyError a valle su un CSV ormai disallineato
+        # dalla config attuale (bug gia' visto una volta con diabetes_130us).
+        target_col = ds_cfg["target_column"]
+        return normalize_target_column(cached, target_col, ds_cfg.get("source_target_column"))
 
     print(f"[ingestion] Dataset '{ds_cfg['name']}' non trovato in locale: scarico da OpenML...")
     from sklearn.datasets import fetch_openml
 
-    bunch = fetch_openml(
-        name=ds_cfg["openml_name"],
-        version=ds_cfg.get("openml_version", "active"),
-        as_frame=True,
-        parser="auto",
-    )
+    # OpenML puo' avere piu' dataset con lo stesso nome caricati da utenti
+    # diversi: 'openml_data_id' (l'ID numerico univoco) e' il modo piu'
+    # specifico e non ambiguo per identificare un dataset esatto, quindi ha
+    # precedenza su nome+versione se presente in config.
+    if "openml_data_id" in ds_cfg:
+        bunch = fetch_openml(
+            data_id=ds_cfg["openml_data_id"],
+            as_frame=True,
+            parser="auto",
+        )
+    else:
+        bunch = fetch_openml(
+            name=ds_cfg["openml_name"],
+            version=ds_cfg.get("openml_version", "active"),
+            as_frame=True,
+            parser="auto",
+        )
     df = bunch.frame
+    df = drop_columns(df, ds_cfg.get("columns_to_drop"))
 
     target_col = ds_cfg["target_column"]
     df = normalize_target_column(df, target_col, ds_cfg.get("source_target_column"))

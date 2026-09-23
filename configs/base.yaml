@@ -11,7 +11,7 @@ synthetic:
 model:
   type: random_forest
   n_estimators: 200
-  max_depth: null
+  max_depth: 25
   random_state: 42
 
 report:
