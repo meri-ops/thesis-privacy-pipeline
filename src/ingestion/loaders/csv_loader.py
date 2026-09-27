@@ -1,9 +1,5 @@
 """Loader generico per dataset gia' distribuiti come CSV
 
-Se config['dataset']['csv_url'] e' presente, il loader prova a scaricare
-il file la prima volta; altrimenti si aspetta che il CSV sia gia' in
-real_data_path (scaricato manualmente) e solleva un errore chiaro se manca,
-invece di fallire piu' avanti nella pipeline con un errore meno leggibile.
 """
 from pathlib import Path
 import pandas as pd

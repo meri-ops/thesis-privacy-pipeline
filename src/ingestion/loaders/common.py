@@ -1,7 +1,8 @@
-"""Utility condivise tra i loader di dataset. Eventualmente piu' facile aggiungere in
-futuro un terzo tipo di loader senza riscrivere questa logica."""
+"""Utility condivise tra i loader di dataset. Eventualmente piu facile aggiungere in
+futuro un terzo tipo di loader senza riscrivere questa logica"""
 from pathlib import Path
 from typing import Optional
+import keyword
 import pandas as pd
 
 
@@ -9,7 +10,9 @@ def normalize_target_column(
     df: pd.DataFrame, target_column: str, source_target_column: Optional[str] = None
 ) -> pd.DataFrame:
     """Rinomina la colonna target originale nel nome canonico atteso dal
-    resto della pipeline (quello dichiarato in config['dataset']['target_column']).
+    resto della pipeline (quello dichiarato in config['dataset']['target_column'])
+    possibile fix al bug del mancato calcolo di new_row_synthetesis_score su alcue run
+    ma in realtà non ha funzionato
     """
     if target_column in df.columns:
         return df
@@ -37,6 +40,49 @@ def drop_columns(df: pd.DataFrame, columns_to_drop: Optional[list] = None) -> pd
         return df
     existing = [c for c in columns_to_drop if c in df.columns]
     return df.drop(columns=existing)
+
+
+# Keyword riservate Python (in minuscolo, per confronto case-insensitive) piu'
+# un paio di token extra che causano lo stesso problema pur non essendo
+# keyword Python in senso stretto (es. 'nan', 'null' vengono comunque
+# interpretati in modo speciale da alcuni parser/query engine).
+_RESERVED_VALUE_TOKENS = {kw.lower() for kw in keyword.kwlist} | {"nan", "null"}
+
+
+def sanitize_reserved_keyword_values(df: pd.DataFrame, suffix: str = "_value") -> pd.DataFrame:
+    """Rinomina i valori (non i nomi colonna) delle colonne categoriche/object
+    che coincidono, case-insensitive, con una keyword riservata Python
+    (es. 'none', 'true', 'false', 'is', 'in', ...).
+
+    Necessario perche' alcune metriche SDMetrics (es. NewRowSynthesis)
+    costruiscono internamente una query numexpr: se il valore letterale di
+    una cella coincide con una keyword, numexpr solleva
+    "Python keyword not valid identifier in numexpr query" anche se il nome
+    della colonna e' innocuo. Caso reale: German Credit ha 3 colonne
+    ('other_parties', 'other_payment_plans', 'own_telephone') con un valore
+    categoriale letterale 'none', distinto da un vero NaN/missing.
+
+    Si applica solo a colonne object/category; le colonne numeriche non sono
+    toccate. Il suffisso di default '_value' rende il cambiamento facilmente
+    riconoscibile in eventuali report/plot a valle.
+    """
+    df = df.copy()
+    candidate_cols = df.select_dtypes(include=["object", "category"]).columns
+
+    for col in candidate_cols:
+        unique_vals = df[col].astype(str).unique()
+        rename_map = {
+            v: f"{v}{suffix}" for v in unique_vals if v.lower() in _RESERVED_VALUE_TOKENS
+        }
+        if not rename_map:
+            continue
+
+        if isinstance(df[col].dtype, pd.CategoricalDtype):
+            df[col] = df[col].cat.rename_categories(rename_map)
+        else:
+            df[col] = df[col].replace(rename_map)
+
+    return df
 
 
 def binarize_target_column(

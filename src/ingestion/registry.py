@@ -8,7 +8,6 @@ from src.ingestion.loaders import openml_loader, csv_loader, sklearn_loader
 LOADERS = {
     "adult_income": openml_loader.load,
     "diabetes_130us": csv_loader.load,
-    "credit_default": openml_loader.load,
     "breast_cancer": sklearn_loader.load,
     "german_credit": openml_loader.load,
 }

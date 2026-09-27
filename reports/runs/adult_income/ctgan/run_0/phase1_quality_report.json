@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-19T12:13:48.040745+00:00",
+  "timestamp": "2026-09-26T17:45:19.267095+00:00",
   "config_used": {
     "seed": 42,
     "synthetic": {
@@ -22,19 +22,19 @@
       "openml_name": "adult",
       "openml_version": 2,
       "source_target_column": "class",
-      "target_column": "class",
+      "target_column": "target",
       "real_data_path": "data/real/adult.csv",
       "test_size": 0.2
     }
   },
-  "config_sha256": "0fbb0560b60b0ae2da170b4f888cb0fdeb1e79ff72cbb57b641256d60d4d178b",
+  "config_sha256": "f88a904a3c270993798a84b517fb3babfeeb55be534d19220daaecee6b17166f",
   "config_sources": {
     "base_yaml_sha256": "f1d56509694a5195651eb0b3ccf3216d6725658131c6add883c8a396c7f4526b",
-    "dataset_yaml_sha256": "7fec9c8e991308c998e5d8920e9f2652e4d9f47ad6513b4c064d2e765b2c512b"
+    "dataset_yaml_sha256": "aa14e5762112a1532381bd6cbac5a4de43e988dd00830b360844845b5ee5d940"
   },
   "dataset": {
     "path": "data/real/adult.csv",
-    "sha256": "d273d956c28eba72241f69dcbb78e37e93862248503a1873fb44b9fc2a6ae00b",
+    "sha256": "740de363e8d615339f3d39374a61e92b406af52efd01791f5557129e640beea8",
     "quality_assessment": {
       "n_rows": 48842,
       "n_cols": 15,
@@ -55,7 +55,7 @@
         "race",
         "sex",
         "native-country",
-        "class"
+        "target"
       ],
       "missing_values_pct": {
         "age": 0.0,
@@ -72,9 +72,9 @@
         "capital-loss": 0.0,
         "hours-per-week": 0.0,
         "native-country": 1.75,
-        "class": 0.0
+        "target": 0.0
       },
-      "target_column": "class",
+      "target_column": "target",
       "class_balance_pct": {
         "<=50K": 76.07,
         ">50K": 23.93
@@ -235,19 +235,19 @@
     "test_size": 0.2,
     "seed": 42,
     "train_path": "data/real/adult_income_train.csv",
-    "train_sha256": "05c231c99941a5af31e0cbb3c43a7c1016f6c23586146064861b8df8d4a83f64",
+    "train_sha256": "f2fa7033555060fd34992249b5c20569eb3b2a6014ee70103ddae45b14713d16",
     "train_n_rows": 39073,
     "test_path": "data/real/adult_income_test.csv",
-    "test_sha256": "1694e1dee59c50e13a1ce80e99bb4344d6d4c2015ed0d525917927bb13693b48",
+    "test_sha256": "ecaa0cdd626965903f39478eedfe762eeabdf300f1fae4e84288b0d960f952ad",
     "test_n_rows": 9769
   },
   "synthetic": {
     "method": "ctgan",
     "output_path": "data/synthetic/adult_synthetic.csv",
-    "sha256": "04a6f90eb419f8a42dfc1c207e477ba7ed227a3b81b8f79b9fa41ba53bac6d76",
+    "sha256": "0399a1cef150a96cb651f4733ec3f5da882662cb49ac4fbac6f50690a5bda196",
     "n_rows": 39073,
-    "fit_seconds": 757.34,
-    "sample_seconds": 1.2
+    "fit_seconds": 791.06,
+    "sample_seconds": 1.28
   },
   "fidelity": {
     "overall_quality_score": 0.8811,
@@ -267,7 +267,7 @@
       "capital-loss": 0.8243,
       "hours-per-week": 0.9406,
       "native-country": 0.8681,
-      "class": 0.9904
+      "target": 0.9904
     },
     "column_pair_trends_score": 0.8575,
     "diagnostic": {
@@ -288,7 +288,7 @@
         "capital-loss": 1.0,
         "hours-per-week": 1.0,
         "native-country": 1.0,
-        "class": 1.0
+        "target": 1.0
       },
       "data_structure_score": 1.0
     },
@@ -310,8 +310,12 @@
       "interpretation": "Frazione di righe sintetiche che non sono quasi-duplicati di nessuna riga reale. Valore vicino a 1 = buono (righe per lo piu' 'nuove'); valore basso = molte righe sintetiche sono troppo simili a righe reali specifiche."
     },
     "dcr_overfitting_protection": {
-      "status": "error",
-      "reason": "DCROverfittingProtection.compute_breakdown() missing 1 required positional argument: 'table_name'. Se l'errore riguarda i nomi dei parametri, la firma di DCROverfittingProtection.compute_breakdown potrebbe differire nella versione di sdmetrics installata: verificare con `help(DCROverfittingProtection.compute_breakdown)` e aggiornare i nomi dei kwargs in questa funzione di conseguenza."
+      "status": "ok",
+      "score": 1.0,
+      "pct_synthetic_closer_to_training": 0.4746,
+      "pct_synthetic_closer_to_holdout": 0.5254,
+      "num_rows_subsample": 5000,
+      "interpretation": "Score vicino a 1.0 = il sintetico non e' mai (o quasi) piu' vicino al train che all'holdout: nessuna evidenza di memorizzazione, buon segnale di privacy. Score vicino a 0.0 = il sintetico e' sistematicamente piu' vicino al train: possibile overfitting del synthesizer sui dati di training, con rischio di leakage di record reali. (0.5 non e' il valore ideale: e' gia' una zona di attenzione, non neutra.)"
     }
   },
   "target_encoding": {

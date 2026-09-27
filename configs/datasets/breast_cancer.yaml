@@ -4,9 +4,9 @@
 # Scelto come sostituto sanitario di diabetes_130us per RQ1: 569 righe (molto
 # piu' piccolo di adult_income, buon contrasto di taglia), 30 feature
 # numeriche continue (piu' delle 14 di adult_income), target moderatamente
-# sbilanciato (~37%/63%, 212 maligni / 357 benigni) -> nessun class_weight
+# sbilanciato (circa37%/63%, 212 maligni / 357 benigni) -> nessun class_weight
 # necessario. Una riga per paziente: nessun rischio di leakage da encounter
-# ripetuti (il problema irrisolto di diabetes_130us, vedi README).
+# ripetuti 
 
 dataset:
   name: breast_cancer

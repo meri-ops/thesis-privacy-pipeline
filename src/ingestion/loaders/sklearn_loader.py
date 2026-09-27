@@ -1,9 +1,4 @@
 """Loader per dataset inclusi direttamente in scikit-learn (sklearn.datasets).
-
-A differenza di openml_loader, qui non c'e' nessun download e nessuna
-ambiguita' di versione: il dataset e' incluso nel pacchetto scikit-learn
-stesso, quindi e' identico su ogni macchina che abbia la stessa versione di
-scikit-learn installata (nessun problema di 'quale copia su OpenML').
 """
 from pathlib import Path
 import pandas as pd

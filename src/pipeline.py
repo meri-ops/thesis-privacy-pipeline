@@ -1,4 +1,4 @@
-"""Fase 1 (completamento): pipeline eseguibile come funzione riusabile.
+"""pipeline eseguibile come funzione riusabile.
 
 `run_pipeline(config, output_dir=None)` esegue le fasi 1-5 su una config
 gia' risolta (base.yaml + dataset yaml [+ eventuali override futuri da
@@ -59,15 +59,14 @@ from src.training.evaluate import evaluate_model
 def set_global_seed(seed: int) -> None:
     """Fissa il seed per tutte le fonti di casualita' usate dalla pipeline
     (split, sampling di GaussianCopula, training/sampling di CTGAN, modelli
-    scikit-learn). Va chiamata PRIMA di istanziare qualunque synthesizer.
+    scikit-learn). Va chiamata PRIMA di istanziare qualunque synthesizer
 
     Effetto atteso: GaussianCopula riproducibile al 100% (stesso hash a
     ogni run, salvo un rischio residuo trascurabile legato a eventuale
-    multi-threading nella decomposizione di Cholesky della matrice di
-    correlazione). CTGAN: varianza molto ridotta rispetto a prima del fix,
+    multi-threading). CTGAN: varianza molto ridotta rispetto a prima del fix,
     ma non azzerata (training stocastico + possibili operazioni floating
     point multi-thread non associative, amplificate su centinaia di step)
-    - e' un limite piu' architetturale del metodo che di implementazione.
+    . Possibile limite del metodo
     """
     random.seed(seed)
     np.random.seed(seed)
@@ -77,7 +76,7 @@ def set_global_seed(seed: int) -> None:
 @contextmanager
 def _timed(label: str, sink: dict):
     """Cronometra il blocco 'with', stampa il risultato a console e lo
-    accumula in sink[label] (in secondi, arrotondato a 2 decimali)."""
+    accumula in sink[label] (in sec)"""
     t0 = time.perf_counter()
     yield
     elapsed = round(time.perf_counter() - t0, 2)

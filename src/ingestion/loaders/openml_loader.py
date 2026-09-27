@@ -1,8 +1,4 @@
 """Loader generico per dataset disponibili su OpenML.
-
-Alla prima esecuzione scarica da OpenML
-e salva un CSV locale alle esecuzioni successive legge solo il
-CSV per garantire riproducibilita' (stesso file, stesso hash, Fase 5 audit).
 """
 from pathlib import Path
 import pandas as pd
@@ -12,6 +8,7 @@ from src.ingestion.loaders.common import (
     ensure_parent_dir,
     load_cached_csv_if_exists,
     drop_columns,
+    sanitize_reserved_keyword_values,
 )
 
 
@@ -29,7 +26,8 @@ def load(config: dict) -> pd.DataFrame:
         # rinomina - evita un KeyError a valle su un CSV ormai disallineato
         # dalla config attuale (bug gia' visto una volta con diabetes_130us).
         target_col = ds_cfg["target_column"]
-        return normalize_target_column(cached, target_col, ds_cfg.get("source_target_column"))
+        cached = normalize_target_column(cached, target_col, ds_cfg.get("source_target_column"))
+        return sanitize_reserved_keyword_values(cached)
 
     print(f"[ingestion] Dataset '{ds_cfg['name']}' non trovato in locale: scarico da OpenML...")
     from sklearn.datasets import fetch_openml
@@ -56,6 +54,7 @@ def load(config: dict) -> pd.DataFrame:
 
     target_col = ds_cfg["target_column"]
     df = normalize_target_column(df, target_col, ds_cfg.get("source_target_column"))
+    df = sanitize_reserved_keyword_values(df)
 
     ensure_parent_dir(real_path)
     df.to_csv(real_path, index=False)

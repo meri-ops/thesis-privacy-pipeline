@@ -1,7 +1,7 @@
 \
 # Report di audit — data/real/german_credit.csv
 
-Generato il **2026-09-19T21:53:37.499625+00:00** · seed = `42`
+Generato il **2026-09-26T18:36:38.293928+00:00** · seed = `42`
 
 ---
 
@@ -10,7 +10,7 @@ Generato il **2026-09-19T21:53:37.499625+00:00** · seed = `42`
 | Campo | Valore |
 |---|---|
 | File di config | `config.yaml` |
-| SHA256 `config.yaml` | `30c485001b721562c9648d10e8a89e10a40a27d153ca35061ac9a7a318d204da` |
+| SHA256 `config.yaml` | `f2b32e59989b8459e7fcbdb9435e4c630cbf60be50229136c3da7bef1beb8fe0` |
 | Metodo sintetico | `ctgan` |
 | Modello | `random_forest` |
 
@@ -28,7 +28,7 @@ Generato il **2026-09-19T21:53:37.499625+00:00** · seed = `42`
 | Metrica | Valore |
 |---|---|
 | Percorso | `data/real/german_credit.csv` |
-| SHA256 | `38b6dbf6fb4b0311a3ffc005730f42623128591fb36473ab3c22d270c0467632` |
+| SHA256 | `227c102de4573201e32befb869189bf001e9b0e341cbbb2b5b9236203cef2b22` |
 | Righe | 1000 |
 | Colonne | 21 |
 | Class balance (%) | {'good': 70.0, 'bad': 30.0} |
@@ -37,8 +37,8 @@ Generato il **2026-09-19T21:53:37.499625+00:00** · seed = `42`
 
 | Set | Righe | Percorso | SHA256 |
 |---|---|---|---|
-| Train | 800 | `data/real/german_credit_train.csv` | `72d0854ae9a9409f...` |
-| Test | 200 | `data/real/german_credit_test.csv` | `a81103bc4c1be0ac...` |
+| Train | 800 | `data/real/german_credit_train.csv` | `05025f0f6fb3119f...` |
+| Test | 200 | `data/real/german_credit_test.csv` | `2866e3bb5ef470b4...` |
 
 
 **Missing values (% > 0):** nessuno
@@ -54,10 +54,10 @@ Generato il **2026-09-19T21:53:37.499625+00:00** · seed = `42`
 |---|---|
 | Metodo | `ctgan` |
 | Righe generate | 800 |
-| Tempo di training del synthesizer | 24.95s |
-| Tempo di generazione | 0.24s |
+| Tempo di training del synthesizer | 14.73s |
+| Tempo di generazione | 0.11s |
 | Percorso | `data/synthetic/german_credit_synthetic.csv` |
-| SHA256 | `8c31664d53999d66e5597e5e6c8d371b841d90752bebd7ed48e9b0857d0c5727` |
+| SHA256 | `dbbff4ac305d247d7968301e5f6767ac5dfa86dfcb671ac0070016d75824ff63` |
 
 ### 3.1 Fedeltà (SDMetrics)
 
@@ -90,7 +90,7 @@ Generato il **2026-09-19T21:53:37.499625+00:00** · seed = `42`
 - `num_dependents`: 0.9812
 - `own_telephone`: 0.9975
 - `foreign_worker`: 0.985
-- `class`: 0.9688
+- `credit_risk`: 0.9688
 
 ### 3.2 Privacy
 
@@ -98,10 +98,10 @@ Generato il **2026-09-19T21:53:37.499625+00:00** · seed = `42`
 |---|---|
 | Duplicati esatti | 0 (0.0%) |
 | New Row Synthesis | 1.0 (soglia indicativa ≥ 0.8) |
-| DCR Overfitting Protection | non disponibile — error: DCROverfittingProtection.compute_breakdown() missing 1 required positional argument: 'table_name'. Se l'errore riguarda i nomi dei parametri, la firma di DCROverfittingProtection.compute_breakdown potrebbe differire nella versione di sdmetrics installata: verificare con `help(DCROverfittingProtection.compute_breakdown)` e aggiornare i nomi dei kwargs in questa funzione di conseguenza. |
+| DCR Overfitting Protection | 0.91 (migliore = 1.0, peggiore = 0.0) |
 
 > Frazione di righe sintetiche che non sono quasi-duplicati di nessuna riga reale. Valore vicino a 1 = buono (righe per lo piu' 'nuove'); valore basso = molte righe sintetiche sono troppo simili a righe reali specifiche.
-
+> Score vicino a 1.0 = il sintetico non e' mai (o quasi) piu' vicino al train che all'holdout: nessuna evidenza di memorizzazione, buon segnale di privacy. Score vicino a 0.0 = il sintetico e' sistematicamente piu' vicino al train: possibile overfitting del synthesizer sui dati di training, con rischio di leakage di record reali. Fonte: SDMetrics DCROverfittingProtection docs.
 
 ---
 

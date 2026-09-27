@@ -1,18 +1,17 @@
 # Parametri comuni a TUTTI gli esperimenti, indipendenti dal dataset e dal
-# metodo sintetico scelto (quello, per la campagna multi-dataset, arrivera'
-# da experiment_grid.yaml — Fase 3 del refactoring).
+# metodo sintetico scelto 
 
 seed: 42
 
 synthetic:
-  method: gaussian_copula   # default per run singole; run_experiments.py lo sovrascrivera' dalla griglia
+  method: gaussian_copula   # default per run singole, run_experiments.py lo sovrascrivera' dalla griglia
   ctgan_epochs: 100         # usato solo se synthetic.method == ctgan
 
 model:
   type: random_forest
   n_estimators: 200
-  max_depth: 25
+  max_depth: null
   random_state: 42
 
 report:
-  output_dir: reports   # default per esecuzioni "legacy" via main.py; run_experiments.py lo sovrascrivera' per isolare ogni run (Fase 3)
+  output_dir: reports   # default per esecuzioni "legacy" via main.py; run_experiments.py lo sovrascrivera' per isolare ogni run 

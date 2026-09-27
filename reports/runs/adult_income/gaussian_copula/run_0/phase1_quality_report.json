@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-19T11:55:31.238687+00:00",
+  "timestamp": "2026-09-26T17:21:55.932820+00:00",
   "config_used": {
     "seed": 42,
     "synthetic": {
@@ -22,19 +22,19 @@
       "openml_name": "adult",
       "openml_version": 2,
       "source_target_column": "class",
-      "target_column": "class",
+      "target_column": "target",
       "real_data_path": "data/real/adult.csv",
       "test_size": 0.2
     }
   },
-  "config_sha256": "9ec8ef31e1d834e727f609ac115e6be38d6df21aa2fd186b209c272b3e3fc27c",
+  "config_sha256": "439403b745a20da622d3bc7b8bbf7600504c20d10501266814043ee5ebb45f24",
   "config_sources": {
     "base_yaml_sha256": "f1d56509694a5195651eb0b3ccf3216d6725658131c6add883c8a396c7f4526b",
-    "dataset_yaml_sha256": "7fec9c8e991308c998e5d8920e9f2652e4d9f47ad6513b4c064d2e765b2c512b"
+    "dataset_yaml_sha256": "aa14e5762112a1532381bd6cbac5a4de43e988dd00830b360844845b5ee5d940"
   },
   "dataset": {
     "path": "data/real/adult.csv",
-    "sha256": "d273d956c28eba72241f69dcbb78e37e93862248503a1873fb44b9fc2a6ae00b",
+    "sha256": "740de363e8d615339f3d39374a61e92b406af52efd01791f5557129e640beea8",
     "quality_assessment": {
       "n_rows": 48842,
       "n_cols": 15,
@@ -55,7 +55,7 @@
         "race",
         "sex",
         "native-country",
-        "class"
+        "target"
       ],
       "missing_values_pct": {
         "age": 0.0,
@@ -72,9 +72,9 @@
         "capital-loss": 0.0,
         "hours-per-week": 0.0,
         "native-country": 1.75,
-        "class": 0.0
+        "target": 0.0
       },
-      "target_column": "class",
+      "target_column": "target",
       "class_balance_pct": {
         "<=50K": 76.07,
         ">50K": 23.93
@@ -235,41 +235,41 @@
     "test_size": 0.2,
     "seed": 42,
     "train_path": "data/real/adult_income_train.csv",
-    "train_sha256": "05c231c99941a5af31e0cbb3c43a7c1016f6c23586146064861b8df8d4a83f64",
+    "train_sha256": "f2fa7033555060fd34992249b5c20569eb3b2a6014ee70103ddae45b14713d16",
     "train_n_rows": 39073,
     "test_path": "data/real/adult_income_test.csv",
-    "test_sha256": "1694e1dee59c50e13a1ce80e99bb4344d6d4c2015ed0d525917927bb13693b48",
+    "test_sha256": "ecaa0cdd626965903f39478eedfe762eeabdf300f1fae4e84288b0d960f952ad",
     "test_n_rows": 9769
   },
   "synthetic": {
     "method": "gaussian_copula",
     "output_path": "data/synthetic/adult_synthetic.csv",
-    "sha256": "a3f4975c356992e86184843dcf70139dc01094087b109690bb20835dbdfab98a",
+    "sha256": "48d67a647e1339ea980f02727ea6a5876076dcb275c3d523b5bcd73dca9a7896",
     "n_rows": 39073,
-    "fit_seconds": 14.03,
-    "sample_seconds": 1.2
+    "fit_seconds": 10.72,
+    "sample_seconds": 1.09
   },
   "fidelity": {
-    "overall_quality_score": 0.8063,
-    "column_shapes_score": 0.861,
+    "overall_quality_score": 0.6156,
+    "column_shapes_score": 0.6856,
     "column_shapes_per_column": {
-      "age": 0.9793,
-      "workclass": 0.9971,
-      "fnlwgt": 0.9284,
-      "education": 0.9918,
-      "education-num": 0.8572,
-      "marital-status": 0.9955,
-      "occupation": 0.9931,
-      "relationship": 0.997,
-      "race": 0.9979,
-      "sex": 0.9971,
-      "capital-gain": 0.0883,
-      "capital-loss": 0.3266,
-      "hours-per-week": 0.7691,
-      "native-country": 0.9971,
-      "class": 0.9999
+      "age": 0.9795,
+      "workclass": 0.1771,
+      "fnlwgt": 0.925,
+      "education": 0.67,
+      "education-num": 0.8566,
+      "marital-status": 0.5545,
+      "occupation": 0.8874,
+      "relationship": 0.7837,
+      "race": 0.8978,
+      "sex": 0.7167,
+      "capital-gain": 0.0885,
+      "capital-loss": 0.3205,
+      "hours-per-week": 0.7719,
+      "native-country": 0.6598,
+      "target": 0.9953
     },
-    "column_pair_trends_score": 0.7516,
+    "column_pair_trends_score": 0.5455,
     "diagnostic": {
       "overall_diagnostic_score": 1.0,
       "data_validity_score": 1.0,
@@ -288,7 +288,7 @@
         "capital-loss": 1.0,
         "hours-per-week": 1.0,
         "native-country": 1.0,
-        "class": 1.0
+        "target": 1.0
       },
       "data_structure_score": 1.0
     },
@@ -303,15 +303,16 @@
       "pct_exact_duplicates_over_synthetic": 0.0
     },
     "new_row_synthesis": {
-      "status": "ok",
-      "score": 1.0,
-      "numerical_match_tolerance": 0.01,
-      "synthetic_sample_size": 10000,
-      "interpretation": "Frazione di righe sintetiche che non sono quasi-duplicati di nessuna riga reale. Valore vicino a 1 = buono (righe per lo piu' 'nuove'); valore basso = molte righe sintetiche sono troppo simili a righe reali specifiche."
+      "status": "error",
+      "reason": "Python keyword not valid identifier in numexpr query (<unknown>, line 1)"
     },
     "dcr_overfitting_protection": {
-      "status": "error",
-      "reason": "DCROverfittingProtection.compute_breakdown() missing 1 required positional argument: 'table_name'. Se l'errore riguarda i nomi dei parametri, la firma di DCROverfittingProtection.compute_breakdown potrebbe differire nella versione di sdmetrics installata: verificare con `help(DCROverfittingProtection.compute_breakdown)` e aggiornare i nomi dei kwargs in questa funzione di conseguenza."
+      "status": "ok",
+      "score": 0.9496,
+      "pct_synthetic_closer_to_training": 0.5252,
+      "pct_synthetic_closer_to_holdout": 0.4748,
+      "num_rows_subsample": 5000,
+      "interpretation": "Score vicino a 1.0 = il sintetico non e' mai (o quasi) piu' vicino al train che all'holdout: nessuna evidenza di memorizzazione, buon segnale di privacy. Score vicino a 0.0 = il sintetico e' sistematicamente piu' vicino al train: possibile overfitting del synthesizer sui dati di training, con rischio di leakage di record reali. (0.5 non e' il valore ideale: e' gia' una zona di attenzione, non neutra.)"
     }
   },
   "target_encoding": {
@@ -338,13 +339,13 @@
       "train_n_rows": 39073,
       "model_type": "random_forest",
       "model_path": "reports/runs/adult_income/gaussian_copula/run_0/models/experiment_B_synthetic.pkl",
-      "model_sha256": "2cda9268432a9a8d0f0726c200cd3d06247f96eddf24a63920445eb9b2a86c3c",
+      "model_sha256": "def59254de7989b72e6e9ee6581000a159f51e8ffbe0410988283956fbd989ad",
       "metrics": {
-        "accuracy": 0.7631,
-        "precision": 0.9286,
-        "recall": 0.0111,
-        "f1": 0.022,
-        "auc_roc": 0.7614
+        "accuracy": 0.7621,
+        "precision": 1.0,
+        "recall": 0.006,
+        "f1": 0.0119,
+        "auc_roc": 0.762
       }
     }
   },

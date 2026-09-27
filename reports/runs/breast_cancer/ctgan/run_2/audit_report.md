@@ -1,7 +1,7 @@
 \
 # Report di audit — data/real/breast_cancer.csv
 
-Generato il **2026-09-19T21:29:28.262246+00:00** · seed = `42`
+Generato il **2026-09-26T18:35:42.401057+00:00** · seed = `42`
 
 ---
 
@@ -54,8 +54,8 @@ Generato il **2026-09-19T21:29:28.262246+00:00** · seed = `42`
 |---|---|
 | Metodo | `ctgan` |
 | Righe generate | 455 |
-| Tempo di training del synthesizer | 14.17s |
-| Tempo di generazione | 0.24s |
+| Tempo di training del synthesizer | 14.71s |
+| Tempo di generazione | 0.25s |
 | Percorso | `data/synthetic/breast_cancer_synthetic.csv` |
 | SHA256 | `610b3cccea85da85f3fe1fa0b4eccb37ab46f5237bbfcea61aec79c3739272c0` |
 
@@ -108,10 +108,10 @@ Generato il **2026-09-19T21:29:28.262246+00:00** · seed = `42`
 |---|---|
 | Duplicati esatti | 0 (0.0%) |
 | New Row Synthesis | 1.0 (soglia indicativa ≥ 0.8) |
-| DCR Overfitting Protection | non disponibile — error: DCROverfittingProtection.compute_breakdown() missing 1 required positional argument: 'table_name'. Se l'errore riguarda i nomi dei parametri, la firma di DCROverfittingProtection.compute_breakdown potrebbe differire nella versione di sdmetrics installata: verificare con `help(DCROverfittingProtection.compute_breakdown)` e aggiornare i nomi dei kwargs in questa funzione di conseguenza. |
+| DCR Overfitting Protection | 0.7018 (migliore = 1.0, peggiore = 0.0) |
 
 > Frazione di righe sintetiche che non sono quasi-duplicati di nessuna riga reale. Valore vicino a 1 = buono (righe per lo piu' 'nuove'); valore basso = molte righe sintetiche sono troppo simili a righe reali specifiche.
-
+> Score vicino a 1.0 = il sintetico non e' mai (o quasi) piu' vicino al train che all'holdout: nessuna evidenza di memorizzazione, buon segnale di privacy. Score vicino a 0.0 = il sintetico e' sistematicamente piu' vicino al train: possibile overfitting del synthesizer sui dati di training, con rischio di leakage di record reali. Fonte: SDMetrics DCROverfittingProtection docs.
 
 ---
 

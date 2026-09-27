@@ -1,5 +1,5 @@
-"""Fase 3 del refactoring: orchestratore della campagna sperimentale
-multi-dataset (item 5 del checklist di migrazione).
+"""Orchestratore della campagna sperimentale
+multi-dataset 
 
 Legge configs/experiment_grid.yaml e, per ogni combinazione
 (dataset, metodo, replica), costruisce la config risolta con un output_dir

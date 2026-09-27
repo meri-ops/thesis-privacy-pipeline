@@ -1,5 +1,5 @@
-"""Fase 3 (item 9 del checklist di migrazione): livello di aggregazione
-(§3.6 del piano di refactoring).
+"""
+livello di aggregazione
 
 load_runs_index() legge reports/runs_index.jsonl (una riga JSON per run,
 scritta da run_experiments.py::summarize_for_index) e la trasforma in un
@@ -13,11 +13,7 @@ import pandas as pd
 
 
 def load_runs_index(index_path: str = "reports/runs_index.jsonl") -> pd.DataFrame:
-    """Legge l'indice delle run e ritorna un DataFrame, una riga per run.
 
-    Solleva un errore con un messaggio chiaro se l'indice non esiste
-    ancora o e' vuoto, invece di un errore pandas generico.
-    """
     path = Path(index_path)
     if not path.exists():
         raise FileNotFoundError(
@@ -40,9 +36,9 @@ def load_runs_index(index_path: str = "reports/runs_index.jsonl") -> pd.DataFram
 def summarize_by_dataset_method(df: pd.DataFrame) -> pd.DataFrame:
     """Aggrega per (dataset, method): media e deviazione standard delle
     metriche principali sulle repliche disponibili (1 per gaussian_copula,
-    N per ctgan). Utile per le tabelle di sintesi in tesi; non sostituisce
+    N per ctgan). Utile per le tabelle di sintesi poi per la tesi pero non sostituisce
     il DataFrame completo (necessario per RQ3, dove serve vedere la
-    variabilita' tra singole repliche, non solo la media).
+    variabilita' tra singole repliche, non solo la media)
     """
     metrics = [
         "accuracy_real", "accuracy_synth", "delta_accuracy",

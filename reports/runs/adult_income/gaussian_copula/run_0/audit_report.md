@@ -1,7 +1,7 @@
 \
 # Report di audit — data/real/adult.csv
 
-Generato il **2026-09-19T11:55:31.238687+00:00** · seed = `42`
+Generato il **2026-09-26T17:21:55.932820+00:00** · seed = `42`
 
 ---
 
@@ -10,7 +10,7 @@ Generato il **2026-09-19T11:55:31.238687+00:00** · seed = `42`
 | Campo | Valore |
 |---|---|
 | File di config | `config.yaml` |
-| SHA256 `config.yaml` | `9ec8ef31e1d834e727f609ac115e6be38d6df21aa2fd186b209c272b3e3fc27c` |
+| SHA256 `config.yaml` | `439403b745a20da622d3bc7b8bbf7600504c20d10501266814043ee5ebb45f24` |
 | Metodo sintetico | `gaussian_copula` |
 | Modello | `random_forest` |
 
@@ -28,7 +28,7 @@ Generato il **2026-09-19T11:55:31.238687+00:00** · seed = `42`
 | Metrica | Valore |
 |---|---|
 | Percorso | `data/real/adult.csv` |
-| SHA256 | `d273d956c28eba72241f69dcbb78e37e93862248503a1873fb44b9fc2a6ae00b` |
+| SHA256 | `740de363e8d615339f3d39374a61e92b406af52efd01791f5557129e640beea8` |
 | Righe | 48842 |
 | Colonne | 15 |
 | Class balance (%) | {'<=50K': 76.07, '>50K': 23.93} |
@@ -37,8 +37,8 @@ Generato il **2026-09-19T11:55:31.238687+00:00** · seed = `42`
 
 | Set | Righe | Percorso | SHA256 |
 |---|---|---|---|
-| Train | 39073 | `data/real/adult_income_train.csv` | `05c231c99941a5af...` |
-| Test | 9769 | `data/real/adult_income_test.csv` | `1694e1dee59c50e1...` |
+| Train | 39073 | `data/real/adult_income_train.csv` | `f2fa7033555060fd...` |
+| Test | 9769 | `data/real/adult_income_test.csv` | `ecaa0cdd62696590...` |
 
 
 **Missing values (% > 0):** `workclass`: 5.73%, `occupation`: 5.75%, `native-country`: 1.75%
@@ -54,48 +54,48 @@ Generato il **2026-09-19T11:55:31.238687+00:00** · seed = `42`
 |---|---|
 | Metodo | `gaussian_copula` |
 | Righe generate | 39073 |
-| Tempo di training del synthesizer | 14.03s |
-| Tempo di generazione | 1.2s |
+| Tempo di training del synthesizer | 10.72s |
+| Tempo di generazione | 1.09s |
 | Percorso | `data/synthetic/adult_synthetic.csv` |
-| SHA256 | `a3f4975c356992e86184843dcf70139dc01094087b109690bb20835dbdfab98a` |
+| SHA256 | `48d67a647e1339ea980f02727ea6a5876076dcb275c3d523b5bcd73dca9a7896` |
 
 ### 3.1 Fedeltà (SDMetrics)
 
 | Metrica | Score |
 |---|---|
-| Overall quality score | 0.8063 |
-| Column shapes score | 0.861 |
-| Column pair trends score | 0.7516 |
+| Overall quality score | 0.6156 |
+| Column shapes score | 0.6856 |
+| Column pair trends score | 0.5455 |
 | Diagnostic score (validity/structure) | 1.0 |
 
 **Column shapes per colonna:**
 
-- `age`: 0.9793
-- `workclass`: 0.9971
-- `fnlwgt`: 0.9284
-- `education`: 0.9918
-- `education-num`: 0.8572
-- `marital-status`: 0.9955
-- `occupation`: 0.9931
-- `relationship`: 0.997
-- `race`: 0.9979
-- `sex`: 0.9971
-- `capital-gain`: 0.0883
-- `capital-loss`: 0.3266
-- `hours-per-week`: 0.7691
-- `native-country`: 0.9971
-- `class`: 0.9999
+- `age`: 0.9795
+- `workclass`: 0.1771
+- `fnlwgt`: 0.925
+- `education`: 0.67
+- `education-num`: 0.8566
+- `marital-status`: 0.5545
+- `occupation`: 0.8874
+- `relationship`: 0.7837
+- `race`: 0.8978
+- `sex`: 0.7167
+- `capital-gain`: 0.0885
+- `capital-loss`: 0.3205
+- `hours-per-week`: 0.7719
+- `native-country`: 0.6598
+- `target`: 0.9953
 
 ### 3.2 Privacy
 
 | Controllo | Esito |
 |---|---|
 | Duplicati esatti | 0 (0.0%) |
-| New Row Synthesis | 1.0 (soglia indicativa ≥ 0.8) |
-| DCR Overfitting Protection | non disponibile — error: DCROverfittingProtection.compute_breakdown() missing 1 required positional argument: 'table_name'. Se l'errore riguarda i nomi dei parametri, la firma di DCROverfittingProtection.compute_breakdown potrebbe differire nella versione di sdmetrics installata: verificare con `help(DCROverfittingProtection.compute_breakdown)` e aggiornare i nomi dei kwargs in questa funzione di conseguenza. |
+| New Row Synthesis | non disponibile — error: Python keyword not valid identifier in numexpr query (<unknown>, line 1) |
+| DCR Overfitting Protection | 0.9496 (migliore = 1.0, peggiore = 0.0) |
 
-> Frazione di righe sintetiche che non sono quasi-duplicati di nessuna riga reale. Valore vicino a 1 = buono (righe per lo piu' 'nuove'); valore basso = molte righe sintetiche sono troppo simili a righe reali specifiche.
 
+> Score vicino a 1.0 = il sintetico non e' mai (o quasi) piu' vicino al train che all'holdout: nessuna evidenza di memorizzazione, buon segnale di privacy. Score vicino a 0.0 = il sintetico e' sistematicamente piu' vicino al train: possibile overfitting del synthesizer sui dati di training, con rischio di leakage di record reali. Fonte: SDMetrics DCROverfittingProtection docs.
 
 ---
 
@@ -104,10 +104,10 @@ Generato il **2026-09-19T11:55:31.238687+00:00** · seed = `42`
 | Esperimento | Righe train | Accuracy | Precision | Recall | F1 | AUC-ROC | SHA256 modello |
 |---|---|---|---|---|---|---|---|
 | experiment_A_real | 39073 | 0.8576 | 0.739 | 0.6262 | 0.6779 | 0.9055 | `4019fba405d981e4...` |
-| experiment_B_synthetic | 39073 | 0.7631 | 0.9286 | 0.0111 | 0.022 | 0.7614 | `2cda9268432a9a8d...` |
+| experiment_B_synthetic | 39073 | 0.7621 | 1.0 | 0.006 | 0.0119 | 0.762 | `def59254de7989b7...` |
 
 
-**Delta accuracy (sintetico − reale):** -0.0945
+**Delta accuracy (sintetico − reale):** -0.0955
 
 **Target encoding** (classi, indice = posizione): ['<=50K', '>50K']
 

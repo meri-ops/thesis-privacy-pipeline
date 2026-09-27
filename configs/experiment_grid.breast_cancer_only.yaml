@@ -2,14 +2,14 @@
 #
 # Usata per completare la campagna dopo che adult_income (4/8 run) era gia'
 # stato completato su Kaggle con la griglia originale (che includeva
-# diabetes_130us, poi sostituito con breast_cancer - vedi
+# diabetes_130us, poi sostituito con breast_cancer. vedi
 # configs/experiment_grid.yaml). Evita di rifare i run di adult_income gia'
 # fatti (run_experiments.py non ha logica di resume automatico).
 #
 # I risultati di questa run finiranno in reports/runs/breast_cancer/... e
 # in un NUOVO reports/runs_index.jsonl (separato da quello di adult_income,
 # scaricato a parte): vanno uniti manualmente/con aggregate.py a fine corsa,
-# come gia' fatto per adult_income.
+# come gia fatto per adult_income
 
 datasets:
   - breast_cancer
