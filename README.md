@@ -2,7 +2,6 @@
 
 Bachelor's thesis in Computer Engineering. A modular pipeline that generates synthetic tabular data (GaussianCopula, CTGAN via SDV), validates fidelity and privacy risk indicators (SDMetrics), trains a Random Forest on real and synthetic data, and writes an audit report with SHA-256 hashes.
 
-Thesis version: tag `v1.0-tesi`.
 
 ## Structure
 
@@ -23,8 +22,7 @@ Campaigns were run on Kaggle (CPU-only, Python 3.12). Installed versions are lis
 
 ## Usage
 
-python run_experiments.py                  # full grid: 3
-datasets x 2 methods
+python run_experiments.py                  # full grid: 3 datasets x 2 methods
 python main.py --dataset german_credit     # single run
 
 Each run writes in reports/runs/{dataset}/{method}/run_{n}/ the JSON and
